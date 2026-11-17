@@ -1,8 +1,4 @@
-"""
-Funciones de seguridad del backend.
-Contraseñas: se guardan como hash bcrypt, nunca en texto plano.
-Tokens: se crean y validan JWT firmados con la SECRET_KEY.
-"""
+"""Hash de contraseñas con bcrypt y manejo de JWT."""
 
 from datetime import datetime, timedelta, timezone
 from typing import Any

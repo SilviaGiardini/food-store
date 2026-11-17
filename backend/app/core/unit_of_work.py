@@ -1,8 +1,4 @@
-"""
-Unit of Work base.
-Abre una sesión al entrar al bloque `with` y la cierra al salir.
-Si todo salió bien, hace commit; si hubo una excepción, hace rollback.
-"""
+"""Unit of Work base: transacción por request."""
 
 from types import TracebackType
 from typing import Callable

@@ -30,5 +30,4 @@ class Usuario(SQLModel, table=True):
         default_factory=lambda: datetime.now(timezone.utc)
     )
 
-    # Un usuario puede tener muchos pedidos.
     pedidos: list["Pedido"] = Relationship(back_populates="usuario")

@@ -11,15 +11,11 @@ from app.modules.pedidos.models import DetallePedido, Pedido
 
 
 class DetallePedidoRepository(BaseRepository[DetallePedido]):
-    """Acceso a datos de la tabla detalle_pedido."""
-
     def __init__(self, session: Session):
         super().__init__(DetallePedido, session)
 
 
 class PedidoRepository(BaseRepository[Pedido]):
-    """Acceso a datos de la tabla pedido."""
-
     def __init__(self, session: Session):
         super().__init__(Pedido, session)
 

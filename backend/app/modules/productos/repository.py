@@ -9,8 +9,6 @@ from app.modules.productos.model import Producto
 
 
 class ProductoRepository(BaseRepository[Producto]):
-    """Acceso a datos de la tabla producto."""
-
     def __init__(self, session: Session):
         super().__init__(Producto, session)
 

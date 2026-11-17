@@ -1,12 +1,4 @@
-"""
-Router de administración de usuarios.
-
-Expone:
-- GET  /api/v1/admin/usuarios
-- POST /api/v1/admin/usuarios/{usuario_id}/activar
-- POST /api/v1/admin/usuarios/{usuario_id}/desactivar
-- Todos estos endpoints requieren rol admin.
-"""
+"""Endpoints de administración de usuarios."""
 
 from typing import Annotated
 

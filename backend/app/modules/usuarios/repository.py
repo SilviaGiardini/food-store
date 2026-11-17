@@ -7,8 +7,6 @@ from app.modules.usuarios.model import Usuario
 
 
 class UsuarioRepository(BaseRepository[Usuario]):
-    """Acceso a datos de la tabla usuario."""
-
     def __init__(self, session: Session):
         super().__init__(Usuario, session)
 

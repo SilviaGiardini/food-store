@@ -1,9 +1,4 @@
-"""
-Service de autenticación.
-
-Aplica las reglas de negocio del registro y del login.
-Abre el Unit of Work y devuelve schemas.
-"""
+"""Reglas de registro y login."""
 
 from fastapi import HTTPException, status
 

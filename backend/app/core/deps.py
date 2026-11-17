@@ -1,12 +1,4 @@
-"""
-Dependencias de autenticación y autorización.
-
-get_current_user lee la cookie y valida el JWT.
-get_current_active_user rechaza las cuentas desactivadas.
-require_role comprueba el rol del usuario.
-
-Los routers no repiten esta lógica: solo usan Depends(...).
-"""
+"""Dependencias de autenticación: cookie, JWT, usuario activo y roles."""
 
 from typing import Annotated
 

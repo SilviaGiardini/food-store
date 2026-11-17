@@ -7,8 +7,6 @@ from app.modules.categorias.model import Categoria
 
 
 class CategoriaRepository(BaseRepository[Categoria]):
-    """Acceso a datos de la tabla categoria."""
-
     def __init__(self, session: Session):
         super().__init__(Categoria, session)
 

@@ -1,8 +1,4 @@
-"""
-Service de usuarios para el panel de administración.
-
-Aplica las reglas de listado, activación y desactivación. El control de rol lo hace el Router con require_role(["admin"]).
-"""
+"""Reglas de listado, activación y desactivación de usuarios."""
 
 from fastapi import HTTPException, status
 

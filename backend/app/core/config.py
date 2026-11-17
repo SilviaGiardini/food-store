@@ -1,10 +1,4 @@
-"""
-Configuración centralizada del backend.
-
-Lee las variables desde el archivo .env y las valida con pydantic-settings.
-El resto del proyecto no debería leer variables de entorno directamente:
-siempre importa `settings` desde acá.
-"""
+"""Configuración leída desde .env."""
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict

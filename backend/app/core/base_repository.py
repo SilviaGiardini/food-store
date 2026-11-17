@@ -1,10 +1,4 @@
-"""
-Repositorio base genérico.
-
-Concentra las operaciones CRUD que comparten todos los módulos.
-Nunca hace commit: agrega, actualiza o borra en la sesión y hace flush()
-para obtener los IDs. El commit lo hace el Unit of Work al salir del bloque.
-"""
+"""Repositorio base genérico. No hace commit: eso lo hace el Unit of Work al salir del bloque."""
 
 from typing import Generic, TypeVar
 
@@ -14,8 +8,6 @@ Modelo = TypeVar("Modelo", bound=SQLModel)
 
 
 class BaseRepository(Generic[Modelo]):
-    """Operaciones CRUD comunes para cualquier modelo SQLModel."""
-
     def __init__(self, modelo: type[Modelo], session: Session):
         self.modelo = modelo
         self.session = session

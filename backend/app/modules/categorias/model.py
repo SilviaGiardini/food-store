@@ -23,5 +23,4 @@ class Categoria(SQLModel, table=True):
     descripcion: str | None = Field(default=None)
     activo: bool = Field(default=True)
 
-    # Una categoría tiene muchos productos.
     productos: list["Producto"] = Relationship(back_populates="categoria")

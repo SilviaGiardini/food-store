@@ -1,12 +1,4 @@
-"""
-Router de autenticación.
-Expone:
-- POST /api/v1/auth/register
-- POST /api/v1/auth/token
-- POST /api/v1/auth/logout
-- GET  /api/v1/auth/me
-El Router no abre el Unit of Work: el Service lo hace.
-"""
+"""Endpoints de autenticación."""
 
 from typing import Annotated
 
