@@ -1,8 +1,8 @@
 """
 Punto de entrada de la aplicación FastAPI.
 
-Registra CORS con credenciales, crea las tablas al arrancar y expone /health.
-Los routers de cada módulo se agregan en las partes siguientes del trabajo.
+Registra CORS con credenciales, crea las tablas al arrancar,
+incluye los routers y expone /health.
 """
 
 from contextlib import asynccontextmanager
@@ -13,11 +13,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import create_all_tables
 
-# Estos imports sirven para que SQLModel registre las cinco tablas antes de llamar a create_all_tables().
+# Estos imports no se usan directamente: registran las cinco tablas en SQLModel antes de llamar a create_all_tables().
 from app.modules.usuarios.model import Usuario  
 from app.modules.categorias.model import Categoria  
 from app.modules.productos.model import Producto  
 from app.modules.pedidos.models import DetallePedido, Pedido  
+
+from app.modules.auth.router import router as auth_router
+from app.modules.usuarios.router import router as usuarios_router
 
 
 @asynccontextmanager
@@ -43,8 +46,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Prefijo común de todos los endpoints de la API.
-API_PREFIX = "/api/v1"
+# Routers: cada uno ya incluye su prefijo /api/v1.
+app.include_router(auth_router)
+app.include_router(usuarios_router)
 
 
 @app.get("/health", tags=["health"])
