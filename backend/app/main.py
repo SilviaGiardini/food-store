@@ -13,6 +13,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import create_all_tables
 
+# Estos imports sirven para que SQLModel registre las cinco tablas antes de llamar a create_all_tables().
+from app.modules.usuarios.model import Usuario  
+from app.modules.categorias.model import Categoria  
+from app.modules.productos.model import Producto  
+from app.modules.pedidos.models import DetallePedido, Pedido  
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
