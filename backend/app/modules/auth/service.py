@@ -1,0 +1,77 @@
+"""
+Service de autenticación.
+
+Aplica las reglas de negocio del registro y del login.
+Abre el Unit of Work y devuelve schemas.
+"""
+
+from fastapi import HTTPException, status
+
+from app.core.config import settings
+from app.core.security import (
+    create_access_token,
+    hash_password,
+    verify_password,
+)
+from app.modules.auth.schemas import Token
+from app.modules.usuarios.model import Usuario
+from app.modules.usuarios.schemas import UserCreate, UserPublic
+from app.modules.usuarios.unit_of_work import UsuarioUnitOfWork
+
+
+class AuthService:
+    """Reglas de negocio para registrarse e iniciar sesión."""
+
+    def __init__(self, uow: UsuarioUnitOfWork):
+        self.uow = uow
+
+    def register(self, datos: UserCreate) -> UserPublic:
+        """Registra un usuario nuevo con rol 'user'."""
+        with self.uow as uow:
+            if uow.usuarios.get_by_username(datos.username):
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="El nombre de usuario ya está en uso",
+                )
+
+            if uow.usuarios.get_by_email(datos.email):
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="El email ya está registrado",
+                )
+
+            usuario = Usuario(
+                username=datos.username,
+                full_name=datos.full_name,
+                email=datos.email,
+                hashed_password=hash_password(datos.password),
+                role="user",
+            )
+            usuario_guardado = uow.usuarios.add(usuario)
+            return UserPublic.model_validate(usuario_guardado)
+
+    def authenticate(self, username: str, password: str) -> Token:
+        """Verifica las credenciales y devuelve un Token con el JWT."""
+        with self.uow as uow:
+            usuario = uow.usuarios.get_by_username(username)
+
+            if usuario is None or not verify_password(
+                password, usuario.hashed_password
+            ):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Credenciales incorrectas",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
+            if usuario.disabled:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cuenta de usuario desactivada",
+                )
+
+            access_token = create_access_token({"sub": usuario.username})
+            return Token(
+                access_token=access_token,
+                expires_in=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            )
