@@ -21,6 +21,7 @@ from app.modules.pedidos.models import DetallePedido, Pedido
 
 from app.modules.auth.router import router as auth_router
 from app.modules.usuarios.router import router as usuarios_router
+from app.modules.categorias.router import router as categorias_router
 
 
 @asynccontextmanager
@@ -49,6 +50,7 @@ app.add_middleware(
 # Routers: cada uno ya incluye su prefijo /api/v1.
 app.include_router(auth_router)
 app.include_router(usuarios_router)
+app.include_router(categorias_router)
 
 
 @app.get("/health", tags=["health"])
