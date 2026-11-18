@@ -1,9 +1,8 @@
 // Crea un pedido y vacía el carrito si sale bien.
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
 import { useCartStore } from "@/store/cartStore";
-import type { Pedido, PedidoCreate } from "../types/pedido";
+import { crearPedido } from "../api/pedidos";
 
 export function useCrearPedido() {
   // Permite avisarle a TanStack Query que los pedidos cambiaron.
@@ -12,10 +11,7 @@ export function useCrearPedido() {
 
   return useMutation({
     // Mandamos el pedido al backend y devolvemos la respuesta ya tipada.
-    mutationFn: async (datos: PedidoCreate) => {
-      const respuesta = await api.post<Pedido>("/pedidos", datos);
-      return respuesta.data;
-    },
+    mutationFn: crearPedido,
     // Si el backend confirmó el pedido, vaciamos el carrito y refrescamos la lista.
     onSuccess: () => {
       vaciar();

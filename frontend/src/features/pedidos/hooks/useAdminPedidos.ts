@@ -1,7 +1,7 @@
 // Lista todos los pedidos para el panel de administración.
 import { useQuery } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
+import { listarPedidos } from "../api/pedidos";
 import type {
   EstadoPedido,
   PedidosPaginados,
@@ -13,15 +13,11 @@ const LIMITE_PEDIDOS = 100;
 export function useAdminPedidos(estado?: EstadoPedido) {
   const query = useQuery<PedidosPaginados>({
     queryKey: ["pedidos", "admin", estado ?? "todos"],
-    queryFn: async () => {
-      const respuesta = await api.get<PedidosPaginados>("/pedidos", {
-        params: {
-          limit: LIMITE_PEDIDOS,
-          estado,
-        },
-      });
-      return respuesta.data;
-    },
+    queryFn: () =>
+      listarPedidos({
+        limit: LIMITE_PEDIDOS,
+        estado,
+      }),
   });
 
   return {

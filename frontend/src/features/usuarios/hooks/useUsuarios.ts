@@ -1,8 +1,11 @@
 // Consulta y cambia el estado de los usuarios desde el panel admin.
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { api } from "@/shared/api/axiosInstance";
 import { useNotificationStore } from "@/store/notificationStore";
+import {
+  cambiarEstadoUsuario,
+  listarUsuarios,
+} from "../api/usuarios";
 import type { UsuarioAdmin } from "../types/usuario";
 
 // Trae la lista de usuarios y prepara la acción para activarlos o desactivarlos.
@@ -13,19 +16,13 @@ export function useUsuarios() {
   // Pide al backend todos los usuarios.
   const query = useQuery<UsuarioAdmin[]>({
     queryKey: ["admin-usuarios"],
-    queryFn: async () => {
-      const res = await api.get<UsuarioAdmin[]>("/admin/usuarios");
-      return res.data;
-    },
+    queryFn: listarUsuarios,
   });
 
   // Activa o desactiva una cuenta y después refresca la lista.
   const toggleMutation = useMutation({
     mutationFn: async ({ id, estaActivo }: { id: number; estaActivo: boolean }) => {
-      const endpoint = estaActivo
-        ? `/admin/usuarios/${id}/desactivar`
-        : `/admin/usuarios/${id}/activar`;
-      await api.post(endpoint);
+      await cambiarEstadoUsuario(id, estaActivo);
       return { id, estaActivo };
     },
     onSuccess: (_, variables) => {

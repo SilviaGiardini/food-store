@@ -1,20 +1,16 @@
 // Hook del panel admin: lista, crea, edita, elimina y ajusta stock.
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
 import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/store/notificationStore";
-import type {
-  Producto,
-  ProductoFormData,
-  ProductosPaginados,
-} from "../types/producto";
-
-interface ActualizarStockData {
-  id: number;
-  stock: number;
-  disponible: boolean;
-}
+import {
+  actualizarProducto,
+  actualizarStockProducto,
+  crearProducto,
+  eliminarProducto,
+  listarProductos,
+} from "../api/productos";
+import type { ProductosPaginados } from "../types/producto";
 
 // Agrupa las consultas y acciones del panel de productos.
 export function useProducts() {
@@ -31,28 +27,12 @@ export function useProducts() {
 
   const query = useQuery<ProductosPaginados>({
     queryKey: ["productos", "admin"],
-    queryFn: async () => {
-      const respuesta = await api.get<ProductosPaginados>("/productos", {
-        params: { limit: 100 },
-      });
-      return respuesta.data;
-    },
+    queryFn: () => listarProductos({ limit: 100 }),
   });
 
   // Crea un producto y avisa si salió bien.
   const crearMutation = useMutation({
-    mutationFn: async (nuevoProducto: ProductoFormData) => {
-      const respuesta = await api.post<Producto>("/productos", {
-        categoria_id: nuevoProducto.categoria_id,
-        nombre: nuevoProducto.nombre,
-        descripcion: nuevoProducto.descripcion.trim() || null,
-        precio_base: nuevoProducto.precio_base,
-        imagen_url: nuevoProducto.imagen_url.trim() || null,
-        stock: nuevoProducto.stock,
-        disponible: nuevoProducto.disponible,
-      });
-      return respuesta.data;
-    },
+    mutationFn: crearProducto,
     onSuccess: () => {
       invalidarProductos();
       mostrarNotificacion("Producto creado correctamente", "success");
@@ -67,21 +47,7 @@ export function useProducts() {
 
   // Actualiza todos los datos del producto.
   const editarMutation = useMutation({
-    mutationFn: async (producto: ProductoFormData & { id: number }) => {
-      const respuesta = await api.put<Producto>(
-        `/productos/${producto.id}`,
-        {
-          categoria_id: producto.categoria_id,
-          nombre: producto.nombre,
-          descripcion: producto.descripcion.trim() || null,
-          precio_base: producto.precio_base,
-          imagen_url: producto.imagen_url.trim() || null,
-          stock: producto.stock,
-          disponible: producto.disponible,
-        }
-      );
-      return respuesta.data;
-    },
+    mutationFn: actualizarProducto,
     onSuccess: () => {
       invalidarProductos();
       mostrarNotificacion("Producto modificado correctamente", "success");
@@ -96,9 +62,7 @@ export function useProducts() {
 
   // Hace la baja lógica del producto.
   const eliminarMutation = useMutation({
-    mutationFn: async (productoId: number) => {
-      await api.delete(`/productos/${productoId}`);
-    },
+    mutationFn: eliminarProducto,
     onSuccess: () => {
       invalidarProductos();
       mostrarNotificacion("Producto eliminado correctamente", "success");
@@ -113,13 +77,7 @@ export function useProducts() {
 
   // Cambia stock y disponibilidad desde los controles de la tabla.
   const actualizarStockMutation = useMutation({
-    mutationFn: async ({ id, stock, disponible }: ActualizarStockData) => {
-      const respuesta = await api.patch<Producto>(
-        `/productos/${id}/stock`,
-        { stock, disponible }
-      );
-      return respuesta.data;
-    },
+    mutationFn: actualizarStockProducto,
     onSuccess: () => {
       invalidarProductos();
       mostrarNotificacion("Stock actualizado correctamente", "success");

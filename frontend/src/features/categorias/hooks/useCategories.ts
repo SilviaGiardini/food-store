@@ -1,7 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { api } from '@/shared/api/axiosInstance';
 import { useNotificationStore } from '@/store/notificationStore';
+import {
+  actualizarCategoria,
+  crearCategoria,
+  eliminarCategoria,
+  listarCategorias,
+} from '../api/categorias';
 import type { Categoria } from '../types/categoria';
 
 // Custom hook de la feature Categories: encapsula llamadas HTTP y TanStack Query
@@ -12,18 +17,12 @@ export function useCategories() {
   // Consulta GET para obtener las categorías
   const query = useQuery<Categoria[]>({
     queryKey: ['categorias'],
-    queryFn: async () => {
-      const res = await api.get<Categoria[]>('/categorias?limit=100');
-      return res.data;
-    },
+    queryFn: listarCategorias,
   });
 
   // Mutación POST para crear una nueva categoría
   const crearMutation = useMutation({
-    mutationFn: async (nueva: { nombre: string; descripcion: string }) => {
-      const res = await api.post<Categoria>('/categorias', nueva);
-      return res.data;
-    },
+    mutationFn: crearCategoria,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       showNotification('Categoría creada correctamente', 'success');
@@ -41,14 +40,7 @@ export function useCategories() {
 
   // Mutación PUT para modificar una categoría existente
   const editarMutation = useMutation({
-    mutationFn: async (categoria: Categoria) => {
-      const res = await api.put<Categoria>(`/categorias/${categoria.id}`, {
-        nombre: categoria.nombre,
-        descripcion: categoria.descripcion ?? '',
-        activo: categoria.activo,
-      });
-      return res.data;
-    },
+    mutationFn: actualizarCategoria,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       showNotification('Categoría modificada correctamente', 'success');
@@ -66,9 +58,7 @@ export function useCategories() {
 
   // Mutación DELETE para eliminación lógica de categoría
   const eliminarMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await api.delete(`/categorias/${id}`);
-    },
+    mutationFn: eliminarCategoria,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       showNotification('Categoría eliminada correctamente', 'success');

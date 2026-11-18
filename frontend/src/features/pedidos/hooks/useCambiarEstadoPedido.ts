@@ -1,10 +1,10 @@
 // Cambia el estado de un pedido desde el panel de administración.
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
 import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/store/notificationStore";
-import type { EstadoPedido, Pedido } from "../types/pedido";
+import { cambiarEstadoPedido } from "../api/pedidos";
+import type { EstadoPedido } from "../types/pedido";
 
 interface CambioEstadoPedido {
   pedidoId: number;
@@ -20,13 +20,8 @@ export function useCambiarEstadoPedido() {
 
   return useMutation({
     // El backend valida la transición permitida según el estado actual.
-    mutationFn: async ({ pedidoId, estado }: CambioEstadoPedido) => {
-      const respuesta = await api.patch<Pedido>(
-        `/pedidos/${pedidoId}/estado`,
-        { estado }
-      );
-      return respuesta.data;
-    },
+    mutationFn: ({ pedidoId, estado }: CambioEstadoPedido) =>
+      cambiarEstadoPedido(pedidoId, estado),
     // Refrescamos pedidos y resumen; si se canceló, también cambió el stock.
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pedidos"] });

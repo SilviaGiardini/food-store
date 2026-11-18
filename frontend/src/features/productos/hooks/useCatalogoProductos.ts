@@ -1,7 +1,7 @@
 // Pide productos paginados con búsqueda y filtros para el catálogo.
 import { useQuery } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
+import { listarProductos } from "../api/productos";
 import type { ProductosPaginados } from "../types/producto";
 
 export interface FiltrosCatalogo {
@@ -22,18 +22,7 @@ export function useCatalogoProductos(filtros: FiltrosCatalogo) {
       filtros.categoria_id ?? null,
       filtros.disponible ?? null,
     ],
-    queryFn: async () => {
-      const res = await api.get<ProductosPaginados>("/productos", {
-        params: {
-          skip: filtros.skip,
-          limit: filtros.limit,
-          search: filtros.search || undefined,
-          categoria_id: filtros.categoria_id,
-          disponible: filtros.disponible,
-        },
-      });
-      return res.data;
-    },
+    queryFn: () => listarProductos(filtros),
   });
 
   return {

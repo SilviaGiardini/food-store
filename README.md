@@ -52,8 +52,6 @@ food-store/
 └── README.md
 ```
 
-El frontend está organizado por features y el backend por módulos de dominio.
-
 ## Requisitos
 
 - Python 3.13

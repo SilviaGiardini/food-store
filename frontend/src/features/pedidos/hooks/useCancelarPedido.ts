@@ -1,10 +1,9 @@
 // Cancela un pedido pendiente y refresca la lista.
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
 import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/store/notificationStore";
-import type { Pedido } from "../types/pedido";
+import { cancelarPedido } from "../api/pedidos";
 
 export function useCancelarPedido() {
   const queryClient = useQueryClient();
@@ -14,12 +13,7 @@ export function useCancelarPedido() {
 
   return useMutation({
     // El backend valida que el pedido sea del usuario y que siga pendiente.
-    mutationFn: async (pedidoId: number) => {
-      const respuesta = await api.patch<Pedido>(
-        `/pedidos/${pedidoId}/cancelar`
-      );
-      return respuesta.data;
-    },
+    mutationFn: cancelarPedido,
     // Si salió bien, cambió el pedido y el stock volvió al catálogo.
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pedidos"] });

@@ -2,8 +2,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { api } from "@/shared/api/axiosInstance";
 import { handleApiError } from "@/shared/api/handleApiError";
+import {
+  cerrarSesion,
+  iniciarSesion,
+  obtenerUsuarioActual,
+} from "@/features/auth/api/auth";
 import type { UsuarioAuth } from "@/features/auth/types/auth.types";
 
 export interface AuthState {
@@ -30,15 +34,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (username: string, password: string) => {
         set({ procesandoLogin: true, error: null });
         try {
-          const params = new URLSearchParams();
-          params.append("username", username);
-          params.append("password", password);
-
-          await api.post("/auth/token", params, {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          });
+          await iniciarSesion(username, password);
 
           await get().checkSession();
           if (!get().usuario) {
@@ -58,7 +54,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          await api.post("/auth/logout");
+          await cerrarSesion();
         } catch {
           // Si el servidor falla, igual cerramos la sesión local.
         } finally {
@@ -68,8 +64,8 @@ export const useAuthStore = create<AuthState>()(
 
       checkSession: async () => {
         try {
-          const res = await api.get<UsuarioAuth>("/auth/me");
-          set({ usuario: res.data, cargando: false });
+          const usuario = await obtenerUsuarioActual();
+          set({ usuario, cargando: false });
         } catch {
           set({ usuario: null, cargando: false });
         }

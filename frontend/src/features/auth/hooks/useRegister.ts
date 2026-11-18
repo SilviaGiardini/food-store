@@ -1,10 +1,9 @@
 // Envía el registro de un usuario nuevo con useMutation.
 import { useMutation } from "@tanstack/react-query";
 
-import { api } from "@/shared/api/axiosInstance";
 import { handleApiError } from "@/shared/api/handleApiError";
 import { useNotificationStore } from "@/store/notificationStore";
-import type { RegistroUsuario } from "../types/auth.types";
+import { registrarUsuario } from "../api/auth";
 
 export function useRegister() {
   const mostrarNotificacion = useNotificationStore(
@@ -13,15 +12,7 @@ export function useRegister() {
 
   const mutation = useMutation({
     // Manda los datos al backend y devuelve la respuesta.
-    mutationFn: async (datos: RegistroUsuario) => {
-      const respuesta = await api.post("/auth/register", {
-        username: datos.username.trim(),
-        full_name: datos.full_name.trim(),
-        email: datos.email.trim(),
-        password: datos.password,
-      });
-      return respuesta.data;
-    },
+    mutationFn: registrarUsuario,
     // Si el registro salió bien, avisamos y dejamos que la página navegue.
     onSuccess: () => {
       mostrarNotificacion(
