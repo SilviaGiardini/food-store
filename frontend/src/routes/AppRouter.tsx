@@ -1,6 +1,6 @@
 // Mapa de rutas de la aplicación.
 import { Routes, Route, Navigate } from "react-router-dom";
-import { LoginPage, RegisterPage, AdminUsersPage } from "@/features/auth";
+import { LoginPage, RegisterPage } from "@/features/auth";
 import { CategoriesPage } from "@/features/categorias";
 import { CatalogoPage, ProductsPage } from "@/features/productos";
 import {
@@ -10,6 +10,7 @@ import {
   CheckoutPage,
   MisPedidosPage,
 } from "@/features/pedidos";
+import { AdminUsuariosPage } from "@/features/usuarios";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -32,7 +33,7 @@ export function AppRouter() {
         <Route path="/admin/categorias" element={<CategoriesPage />} />
         <Route path="/admin/productos" element={<ProductsPage />} />
         <Route path="/admin/pedidos" element={<AdminPedidosPage />} />
-        <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+        <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

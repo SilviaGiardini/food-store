@@ -12,7 +12,7 @@ import {
 } from "@tanstack/react-table";
 
 import { EmptyState } from "@/shared/components/EmptyState";
-import type { UsuarioAdmin } from "../types/auth.types";
+import type { UsuarioAdmin } from "../types/usuario";
 
 interface UsuarioTableProps {
   usuarios: UsuarioAdmin[];

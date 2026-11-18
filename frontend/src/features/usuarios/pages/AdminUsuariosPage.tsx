@@ -1,14 +1,14 @@
 import { LoadingState } from "@/shared/components/LoadingState";
 import { ErrorState } from "@/shared/components/ErrorState";
-import { useAdminUsers } from "../hooks/useAdminUsers";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "@/features/auth";
+import { useUsuarios } from "../hooks/useUsuarios";
 import { UsuarioTable } from "../components/UsuarioTable";
 
 // Componente para que los administradores gestionen las cuentas de usuario
-export default function AdminUsersPage() {
+export default function AdminUsuariosPage() {
   const { usuario } = useAuth();
   const { usuarios, cargando, actualizando, error, procesandoId, toggleEstadoUsuario, recargar } =
-    useAdminUsers();
+    useUsuarios();
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8 w-full">

@@ -15,5 +15,3 @@ export interface RegistroUsuario {
   email: string;
   password: string;
 }
-
-export type UsuarioAdmin = UsuarioAuth;

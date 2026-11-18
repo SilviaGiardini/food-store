@@ -3,9 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { api } from "@/shared/api/axiosInstance";
 import { useNotificationStore } from "@/store/notificationStore";
-import type { UsuarioAdmin } from "../types/auth.types";
+import type { UsuarioAdmin } from "../types/usuario";
 
-export function useAdminUsers() {
+export function useUsuarios() {
   const queryClient = useQueryClient();
   const showNotification = useNotificationStore((state) => state.showNotification);
 
@@ -76,4 +76,4 @@ export function useAdminUsers() {
   };
 }
 
-export default useAdminUsers;
+export default useUsuarios;
