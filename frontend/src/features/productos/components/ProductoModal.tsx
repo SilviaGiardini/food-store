@@ -1,7 +1,7 @@
 // Formulario para crear o editar un producto desde el panel admin.
 import { useForm } from "@tanstack/react-form";
 
-import { Button, Input } from "@/shared/ui";
+import { Button, Input, Modal } from "@/shared/ui";
 import type { Categoria } from "@/features/categorias";
 import type { Producto, ProductoFormData } from "../types/producto";
 
@@ -78,13 +78,11 @@ export function ProductoModal({
     "w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all";
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <h2 className="text-lg font-bold text-gray-800 mb-5">
-          {productoParaEditar ? "Editar producto" : "Nuevo producto"}
-        </h2>
-
-        {error && (
+    <Modal
+      titulo={productoParaEditar ? "Editar producto" : "Nuevo producto"}
+      onCerrar={cerrarModal}
+    >
+      {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
             <span>⚠️</span>
             <span>{error}</span>
@@ -316,8 +314,7 @@ export function ProductoModal({
             </form.Subscribe>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }
 

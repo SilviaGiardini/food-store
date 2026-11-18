@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 
-import { Button, Input } from "@/shared/ui";
+import { Button, Input, Modal } from "@/shared/ui";
 import type { Categoria } from "../types/categoria";
 
 interface CategoriaModalProps {
@@ -38,14 +38,12 @@ export function CategoriaModal({
   });
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-4xl shadow-sm border border-gray-100 p-6 mb-8 w-full max-w-md">
-        <h2 className="text-lg font-bold text-gray-800 mb-5 flex items-center gap-1.5">
-          <span className="text-gray-500 font-normal">+</span>
-          {categoriaParaEditar ? "Editar Categoría" : "Nueva Categoría"}
-        </h2>
-
-        {error && (
+    <Modal
+      titulo={categoriaParaEditar ? "Editar Categoría" : "Nueva Categoría"}
+      onCerrar={cerrarModal}
+      ancho="sm"
+    >
+      {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
             <span>⚠️</span>
             <span>{error}</span>
@@ -116,7 +114,6 @@ export function CategoriaModal({
             </form.Subscribe>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 }
