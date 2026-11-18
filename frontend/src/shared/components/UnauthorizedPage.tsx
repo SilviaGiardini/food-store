@@ -26,10 +26,10 @@ export function UnauthorizedPage() {
 
         {/* Botón para regresar a una página segura */}
         <Link
-          to="/categories"
+          to="/"
           className="inline-flex items-center justify-center px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
         >
-          Volver a Categorías
+          Volver al catálogo
         </Link>
       </div>
     </div>

@@ -54,7 +54,17 @@ export function Navbar() {
                 {esAdmin && (
                   <li>
                     <Link
-                      to="/categories"
+                      to="/admin/resumen"
+                      className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                    >
+                      Resumen
+                    </Link>
+                  </li>
+                )}
+                {esAdmin && (
+                  <li>
+                    <Link
+                      to="/admin/categorias"
                       className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                     >
                       Categorías
@@ -64,7 +74,17 @@ export function Navbar() {
                 {esAdmin && (
                   <li>
                     <Link
-                      to="/admin/users"
+                      to="/admin/pedidos"
+                      className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                    >
+                      Pedidos
+                    </Link>
+                  </li>
+                )}
+                {esAdmin && (
+                  <li>
+                    <Link
+                      to="/admin/usuarios"
                       className="text-orange-600 dark:text-orange-400 font-semibold hover:text-orange-700 transition-colors"
                     >
                       Usuarios
