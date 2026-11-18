@@ -84,6 +84,16 @@ export function Navbar() {
                 {esAdmin && (
                   <li>
                     <Link
+                      to="/admin/productos"
+                      className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                    >
+                      Productos
+                    </Link>
+                  </li>
+                )}
+                {esAdmin && (
+                  <li>
+                    <Link
                       to="/admin/usuarios"
                       className="text-orange-600 dark:text-orange-400 font-semibold hover:text-orange-700 transition-colors"
                     >

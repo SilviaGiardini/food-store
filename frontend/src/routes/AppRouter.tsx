@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, RegisterPage, AdminUsersPage } from "@/features/auth";
 import { CategoriesPage } from "@/features/categorias";
-import { CatalogoPage } from "@/features/productos";
+import { CatalogoPage, ProductsPage } from "@/features/productos";
 import {
   AdminPedidosPage,
   AdminResumenPage,
@@ -30,6 +30,7 @@ export function AppRouter() {
       <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
         <Route path="/admin/resumen" element={<AdminResumenPage />} />
         <Route path="/admin/categorias" element={<CategoriesPage />} />
+        <Route path="/admin/productos" element={<ProductsPage />} />
         <Route path="/admin/pedidos" element={<AdminPedidosPage />} />
         <Route path="/admin/usuarios" element={<AdminUsersPage />} />
       </Route>

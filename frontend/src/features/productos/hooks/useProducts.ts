@@ -1,108 +1,152 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { api } from '@/shared/api/axiosInstance';
-import { useNotificationStore } from '@/store/notificationStore';
-import type { Producto, ProductoFormData } from '../types/producto';
+// Hook del panel admin: lista, crea, edita, elimina y ajusta stock.
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-// Custom hook de la feature Products: encapsula llamadas HTTP y TanStack Query
+import { api } from "@/shared/api/axiosInstance";
+import { handleApiError } from "@/shared/api/handleApiError";
+import { useNotificationStore } from "@/store/notificationStore";
+import type {
+  Producto,
+  ProductoFormData,
+  ProductosPaginados,
+} from "../types/producto";
+
+interface ActualizarStockData {
+  id: number;
+  stock: number;
+  disponible: boolean;
+}
+
+// Agrupa las consultas y acciones del panel de productos.
 export function useProducts() {
   const queryClient = useQueryClient();
-  const showNotification = useNotificationStore((state) => state.showNotification);
+  const mostrarNotificacion = useNotificationStore(
+    (state) => state.showNotification
+  );
 
-  // Consulta GET para obtener los productos
-  const query = useQuery<Producto[]>({
-    queryKey: ['productos'],
+  // Cuando cambia un producto, refrescamos el panel y también el catálogo.
+  const invalidarProductos = () => {
+    queryClient.invalidateQueries({ queryKey: ["productos"] });
+    queryClient.invalidateQueries({ queryKey: ["catalogo-productos"] });
+  };
+
+  const query = useQuery<ProductosPaginados>({
+    queryKey: ["productos", "admin"],
     queryFn: async () => {
-      const res = await api.get<Producto[]>('/productos?limit=100');
-      return res.data;
+      const respuesta = await api.get<ProductosPaginados>("/productos", {
+        params: { limit: 100 },
+      });
+      return respuesta.data;
     },
   });
 
-  // Mutación POST para crear un nuevo producto
+  // Crea un producto y avisa si salió bien.
   const crearMutation = useMutation({
     mutationFn: async (nuevoProducto: ProductoFormData) => {
-      const res = await api.post<Producto>('/productos', {
+      const respuesta = await api.post<Producto>("/productos", {
+        categoria_id: nuevoProducto.categoria_id,
         nombre: nuevoProducto.nombre,
-        descripcion: nuevoProducto.descripcion ?? null,
+        descripcion: nuevoProducto.descripcion.trim() || null,
         precio_base: nuevoProducto.precio_base,
-        categoria_ids: nuevoProducto.categoria_ids,
-        disponible: nuevoProducto.disponible ?? true,
-        imagenes_url: nuevoProducto.imagenes_url ?? [],
+        imagen_url: nuevoProducto.imagen_url.trim() || null,
+        stock: nuevoProducto.stock,
+        disponible: nuevoProducto.disponible,
       });
-      return res.data;
+      return respuesta.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['productos'] });
-      showNotification('Producto creado correctamente', 'success');
+      invalidarProductos();
+      mostrarNotificacion("Producto creado correctamente", "success");
     },
     onError: (error: unknown) => {
-      let mensaje = 'Error al crear el producto';
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        mensaje = String(error.response.data.detail);
-      } else if (error instanceof Error) {
-        mensaje = error.message;
-      }
-      showNotification(mensaje, 'error');
+      mostrarNotificacion(
+        handleApiError(error, "No se pudo crear el producto"),
+        "error"
+      );
     },
   });
 
-  // Mutación PUT para modificar un producto existente
+  // Actualiza todos los datos del producto.
   const editarMutation = useMutation({
     mutationFn: async (producto: ProductoFormData & { id: number }) => {
-      const res = await api.put<Producto>(`/productos/${producto.id}`, {
-        nombre: producto.nombre,
-        descripcion: producto.descripcion ?? null,
-        precio_base: producto.precio_base,
-        categoria_ids: producto.categoria_ids,
-        disponible: producto.disponible ?? true,
-        imagenes_url: producto.imagenes_url ?? [],
-      });
-      return res.data;
+      const respuesta = await api.put<Producto>(
+        `/productos/${producto.id}`,
+        {
+          categoria_id: producto.categoria_id,
+          nombre: producto.nombre,
+          descripcion: producto.descripcion.trim() || null,
+          precio_base: producto.precio_base,
+          imagen_url: producto.imagen_url.trim() || null,
+          stock: producto.stock,
+          disponible: producto.disponible,
+        }
+      );
+      return respuesta.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['productos'] });
-      showNotification('Producto modificado correctamente', 'success');
+      invalidarProductos();
+      mostrarNotificacion("Producto modificado correctamente", "success");
     },
     onError: (error: unknown) => {
-      let mensaje = 'Error al editar el producto';
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        mensaje = String(error.response.data.detail);
-      } else if (error instanceof Error) {
-        mensaje = error.message;
-      }
-      showNotification(mensaje, 'error');
+      mostrarNotificacion(
+        handleApiError(error, "No se pudo modificar el producto"),
+        "error"
+      );
     },
   });
 
-  // Mutación DELETE para eliminación lógica de un producto
+  // Hace la baja lógica del producto.
   const eliminarMutation = useMutation({
     mutationFn: async (productoId: number) => {
       await api.delete(`/productos/${productoId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['productos'] });
-      showNotification('Producto eliminado correctamente', 'success');
+      invalidarProductos();
+      mostrarNotificacion("Producto eliminado correctamente", "success");
     },
     onError: (error: unknown) => {
-      let mensaje = 'Error al eliminar el producto';
-      if (axios.isAxiosError(error) && error.response?.data?.detail) {
-        mensaje = String(error.response.data.detail);
-      } else if (error instanceof Error) {
-        mensaje = error.message;
-      }
-      showNotification(mensaje, 'error');
+      mostrarNotificacion(
+        handleApiError(error, "No se pudo eliminar el producto"),
+        "error"
+      );
     },
   });
 
+  // Cambia stock y disponibilidad desde los controles de la tabla.
+  const actualizarStockMutation = useMutation({
+    mutationFn: async ({ id, stock, disponible }: ActualizarStockData) => {
+      const respuesta = await api.patch<Producto>(
+        `/productos/${id}/stock`,
+        { stock, disponible }
+      );
+      return respuesta.data;
+    },
+    onSuccess: () => {
+      invalidarProductos();
+      mostrarNotificacion("Stock actualizado correctamente", "success");
+    },
+    onError: (error: unknown) => {
+      mostrarNotificacion(
+        handleApiError(error, "No se pudo actualizar el stock"),
+        "error"
+      );
+    },
+  });
+
+  const actualizandoId = actualizarStockMutation.isPending
+    ? actualizarStockMutation.variables?.id ?? null
+    : null;
+
   return {
-    productos: query.data ?? [],
+    productos: query.data?.items ?? [],
+    total: query.data?.total ?? 0,
     isPending: query.isPending,
     isError: query.isError,
     crearProducto: crearMutation.mutateAsync,
     editarProducto: editarMutation.mutateAsync,
     eliminarProducto: eliminarMutation.mutate,
+    actualizarStock: actualizarStockMutation.mutate,
+    actualizandoId,
   };
 }
 
 export default useProducts;
-

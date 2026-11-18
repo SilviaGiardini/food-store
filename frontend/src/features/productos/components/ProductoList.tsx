@@ -14,30 +14,37 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 
-// Props que recibe este componente desde la página padre (ProductsPage)
+const formatoPrecio = new Intl.NumberFormat("es-AR", {
+  style: "currency",
+  currency: "ARS",
+  maximumFractionDigits: 0,
+});
+
 interface ProductoListProps {
-  productos: Producto[]; // Lista de productos que viene de la API
-  onAñadirProducto: () => void; // Función para abrir el modal en modo "crear"
-  onEditar: (producto: Producto) => void; // Función para abrir el modal con un producto a editar
-  onEliminar: (productoId: number) => void; // Función para borrar un producto por su ID
+  productos: Producto[];
+  onAñadirProducto: () => void;
+  onEditar: (producto: Producto) => void;
+  onEliminar: (productoId: number) => void;
+  onAjustarStock: (producto: Producto, nuevoStock: number) => void;
+  onToggleDisponible: (producto: Producto) => void;
+  productoActualizando: number | null;
 }
 
-// Creamos el helper de columnas tipado con nuestra interfaz Producto.
 const columnHelper = createColumnHelper<Producto>();
 
-// Constante fija por si la lista viene vacía o undefined
 const sinProductos: Producto[] = [];
 
+// Dibuja la tabla y muestra los controles de stock y disponibilidad.
 export default function ProductoList({
   productos,
   onAñadirProducto,
   onEditar,
   onEliminar,
+  onAjustarStock,
+  onToggleDisponible,
+  productoActualizando,
 }: ProductoListProps) {
-  // Estado para saber por qué columna estamos ordenando y en qué dirección
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  // Estado para la paginación
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -46,7 +53,6 @@ export default function ProductoList({
   const usuario = useAuthStore((state) => state.usuario);
   const esAdmin = usuario?.role === "admin";
 
-  // Definición de las columnas de la tabla
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
@@ -55,79 +61,89 @@ export default function ProductoList({
           <div className="text-center font-mono">#{info.getValue()}</div>
         ),
       }),
-
       columnHelper.accessor("nombre", {
         header: "NOMBRE",
+        cell: (info) => (
+          <div>
+            <p className="font-medium text-gray-800">{info.getValue()}</p>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {info.row.original.descripcion ?? "Sin descripción"}
+            </p>
+          </div>
+        ),
       }),
-
-      columnHelper.accessor("descripcion", {
-        header: "DESCRIPCIÓN",
-        cell: (info) => {
-          const valor = info.getValue();
-          return valor ? (
-            <span>{valor}</span>
-          ) : (
-            <span className="text-gray-400 italic">Sin descripción</span>
-          );
-        },
+      columnHelper.accessor("categoria", {
+        header: "CATEGORÍA",
+        cell: (info) => (
+          <span className="px-2 py-0.5 bg-orange-50 text-orange-700 text-xs font-medium rounded-md border border-orange-200">
+            {info.getValue().nombre}
+          </span>
+        ),
       }),
-
       columnHelper.accessor("precio_base", {
         header: "PRECIO",
         cell: (info) => (
           <span className="font-medium text-gray-800">
-            $
-            {Number(info.getValue()).toLocaleString("es-AR", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
+            {formatoPrecio.format(info.getValue())}
           </span>
         ),
       }),
-
-      columnHelper.accessor("categorias", {
-        header: "CATEGORÍAS",
+      columnHelper.accessor("stock", {
+        header: "STOCK",
         cell: (info) => {
-          const listaCategorias = info.getValue();
-          if (!listaCategorias || listaCategorias.length === 0) {
-            return (
-              <span className="text-gray-400 italic text-xs">
-                Sin categoría
-              </span>
-            );
-          }
+          const producto = info.row.original;
+          const actualizando = productoActualizando === producto.id;
           return (
-            <div className="flex flex-wrap gap-1">
-              {listaCategorias.map((categoria) => (
-                <span
-                  key={categoria.id}
-                  className="px-2 py-0.5 bg-orange-50 text-orange-700 text-xs font-medium rounded-md border border-orange-200"
-                >
-                  {categoria.nombre}
-                </span>
-              ))}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() =>
+                  onAjustarStock(producto, Math.max(0, info.getValue() - 1))
+                }
+                disabled={actualizando || info.getValue() <= 0}
+                className="w-6 h-6 rounded border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label={`Restar stock a ${producto.nombre}`}
+              >
+                −
+              </button>
+              <span className="w-7 text-center font-mono text-sm text-gray-800">
+                {info.getValue()}
+              </span>
+              <button
+                type="button"
+                onClick={() => onAjustarStock(producto, info.getValue() + 1)}
+                disabled={actualizando}
+                className="w-6 h-6 rounded border border-gray-200 text-gray-600 cursor-pointer hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label={`Sumar stock a ${producto.nombre}`}
+              >
+                +
+              </button>
             </div>
           );
         },
       }),
-
       columnHelper.accessor("disponible", {
-        header: "ESTADO",
+        header: "DISPONIBLE",
         cell: (info) => {
-          const disponible = info.getValue();
-          return disponible ? (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Disponible
-            </span>
-          ) : (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
-              Inactivo
-            </span>
+          const producto = info.row.original;
+          const actualizando = productoActualizando === producto.id;
+          return (
+            <button
+              type="button"
+              onClick={() => onToggleDisponible(producto)}
+              disabled={actualizando}
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold border cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                info.getValue()
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                  : "bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200"
+              }`}
+              title="Cambiar disponibilidad"
+            >
+              {info.getValue() ? "Sí" : "No"}
+            </button>
           );
         },
       }),
-
-      // Solo los administradores pueden ver y usar la columna de acciones (editar/eliminar)
       ...(esAdmin
         ? [
             columnHelper.display({
@@ -155,10 +171,16 @@ export default function ProductoList({
           ]
         : []),
     ],
-    [onEditar, onEliminar, esAdmin]
+    [
+      onAjustarStock,
+      onEditar,
+      onEliminar,
+      onToggleDisponible,
+      productoActualizando,
+      esAdmin,
+    ]
   );
 
-  // Inicializamos la instancia de TanStack Table
   const table = useReactTable({
     data: productos.length ? productos : sinProductos,
     columns,
@@ -171,16 +193,14 @@ export default function ProductoList({
   });
 
   return (
-    <div className="bg-white rounded-4xl shadow-sm border border-gray-100 overflow-hidden">
-      {/* Encabezado: Título con contador total y botón para crear nuevo producto */}
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <h2 className="text-lg font-bold text-gray-800">
           Productos ({productos.length})
         </h2>
-        {/* Solo mostramos el botón de añadir si el usuario es administrador */}
         {esAdmin && (
           <button
-            className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm"
+            className="w-full sm:w-auto bg-orange-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-700 transition-colors text-sm font-medium shadow-sm"
             type="button"
             onClick={() => onAñadirProducto()}
           >
@@ -189,34 +209,34 @@ export default function ProductoList({
         )}
       </div>
 
-      {/* Si no hay productos cargados mostramos un mensaje vacío */}
       {productos.length === 0 ? (
         <EmptyState mensaje="No hay productos registrados en el catálogo." />
       ) : (
         <>
-          {/* Tabla responsive con scroll horizontal en pantallas chicas */}
           <div className="overflow-x-auto">
-            <table className="w-full table-fixed border-collapse text-sm">
+            <table className="w-full min-w-[860px] table-fixed border-collapse text-sm">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
                         key={header.id}
-                        className={`px-5 py-3.5 bg-gray-50 text-xs font-semibold text-gray-400 border-b border-gray-100 ${
+                        className={`px-4 py-3.5 bg-gray-50 text-xs font-semibold text-gray-400 border-b border-gray-100 ${
                           header.id === "id"
                             ? "w-14 text-center"
                             : header.id === "nombre"
-                              ? "w-44 text-left"
-                              : header.id === "precio_base"
-                                ? "w-24 text-left"
-                                : header.id === "categorias"
-                                  ? "w-36 text-left"
-                                  : header.id === "disponible"
-                                    ? "w-24 text-left"
-                                    : header.id === "acciones"
-                                      ? "w-36 text-center"
-                                      : "text-left"
+                              ? "w-64 text-left"
+                              : header.id === "categoria"
+                                ? "w-32 text-left"
+                                : header.id === "precio_base"
+                                  ? "w-28 text-left"
+                                  : header.id === "stock"
+                                    ? "w-28 text-left"
+                                    : header.id === "disponible"
+                                      ? "w-24 text-left"
+                                      : header.id === "acciones"
+                                        ? "w-32 text-center"
+                                        : "text-left"
                         }`}
                       >
                         {header.isPlaceholder ? null : (
@@ -232,7 +252,7 @@ export default function ProductoList({
                           >
                             {flexRender(
                               header.column.columnDef.header,
-                              header.getContext(),
+                              header.getContext()
                             )}
                             {header.column.getIsSorted()
                               ? { asc: " ▲", desc: " ▼" }[
@@ -255,11 +275,11 @@ export default function ProductoList({
                     {row.getVisibleCells().map((cell) => (
                       <td
                         key={cell.id}
-                        className="px-5 py-3.5 text-sm text-gray-700 align-top"
+                        className="px-4 py-3.5 text-sm text-gray-700 align-top"
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext(),
+                          cell.getContext()
                         )}
                       </td>
                     ))}
@@ -269,7 +289,6 @@ export default function ProductoList({
             </table>
           </div>
 
-          {/* Barra de navegación inferior para cambiar de página */}
           <nav className="flex items-center justify-center gap-4 border-t border-gray-100 bg-gray-50 px-4 py-3">
             <button
               type="button"

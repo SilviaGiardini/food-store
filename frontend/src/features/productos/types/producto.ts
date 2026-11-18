@@ -1,7 +1,7 @@
-// Tipos de productos: catálogo público y formulario de administración.
+// Tipos de productos: catálogo, panel admin y formulario.
 import type { Categoria } from "@/features/categorias";
 
-export interface ProductoCatalogo {
+export interface Producto {
   id: number;
   categoria_id: number;
   nombre: string;
@@ -14,26 +14,19 @@ export interface ProductoCatalogo {
   categoria: Categoria;
 }
 
+export type ProductoCatalogo = Producto;
+
 export interface ProductosPaginados {
   total: number;
-  items: ProductoCatalogo[];
-}
-
-export interface Producto {
-  id: number;
-  nombre: string;
-  descripcion?: string;
-  precio_base: number;
-  imagenes_url: string[];
-  disponible: boolean;
-  categorias?: Categoria[];
+  items: Producto[];
 }
 
 export interface ProductoFormData {
+  categoria_id: number;
   nombre: string;
-  descripcion?: string;
+  descripcion: string;
   precio_base: number;
-  disponible?: boolean;
-  categoria_ids: number[];
-  imagenes_url?: string[];
+  imagen_url: string;
+  stock: number;
+  disponible: boolean;
 }
