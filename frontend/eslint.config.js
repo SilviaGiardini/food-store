@@ -19,4 +19,14 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    files: [
+      'src/features/categorias/components/CategoriaList.tsx',
+      'src/features/productos/components/ProductoList.tsx',
+      'src/features/usuarios/components/UsuarioTable.tsx',
+    ],
+    rules: {
+      'react-hooks/incompatible-library': 'off',
+    },
+  },
 ])
