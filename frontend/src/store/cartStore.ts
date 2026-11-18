@@ -9,12 +9,15 @@ export interface ItemCarrito {
   cantidad: number;
 }
 
+export interface ItemCarritoInput {
+  producto_id: number;
+  nombre: string;
+  precio_unitario: number;
+}
+
 interface CartState {
   items: ItemCarrito[];
-  agregar: (
-    item: Omit<ItemCarrito, "cantidad">,
-    cantidad?: number
-  ) => void;
+  agregar: (item: ItemCarritoInput, cantidad?: number) => void;
   quitar: (producto_id: number) => void;
   cambiarCantidad: (producto_id: number, cantidad: number) => void;
   vaciar: () => void;
