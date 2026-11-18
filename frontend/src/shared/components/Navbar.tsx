@@ -1,12 +1,18 @@
 // Barra de navegación: sesión, rol y accesos.
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth";
+import { useCartStore } from "@/store/cartStore";
 import { useThemeStore } from "@/store/themeStore";
 
 export function Navbar() {
   const navigate = useNavigate();
   const { usuario, logout } = useAuth();
   const { darkMode, toggleTheme } = useThemeStore();
+  const items = useCartStore((state) => state.items);
+  const cantidadCarrito = items.reduce(
+    (suma, item) => suma + item.cantidad,
+    0
+  );
 
   const handleLogout = async () => {
     await logout();
@@ -64,6 +70,13 @@ export function Navbar() {
 
         {/* Zona de controles: Tema oscuro + Autenticación */}
         <div className="flex items-center gap-3">
+          <Link
+            to="/carrito"
+            className="px-3.5 py-1.5 text-sm font-medium text-gray-700 dark:text-slate-200 hover:text-orange-600 transition-colors"
+          >
+            Carrito ({cantidadCarrito})
+          </Link>
+
           {/* Botón para alternar tema oscuro / claro */}
           <button
             type="button"

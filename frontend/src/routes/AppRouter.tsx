@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, RegisterPage, AdminUsersPage } from "@/features/auth";
 import { CategoriesPage } from "@/features/categorias";
 import { CatalogoPage } from "@/features/productos";
+import { CarritoPage } from "@/features/pedidos";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -10,6 +11,7 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<CatalogoPage />} />
+      <Route path="/carrito" element={<CarritoPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
