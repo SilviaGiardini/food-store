@@ -168,6 +168,7 @@ Los usuarios nuevos se registran desde `/register`.
 | `/admin/productos` | Admin |
 | `/admin/pedidos` | Admin |
 | `/admin/usuarios` | Admin |
+| `/unauthorized` | Público |
 
 ## Documentación de la API
 
