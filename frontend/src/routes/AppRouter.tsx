@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, RegisterPage, AdminUsersPage } from "@/features/auth";
 import { CategoriesPage } from "@/features/categorias";
 import { CatalogoPage } from "@/features/productos";
-import { CarritoPage, CheckoutPage } from "@/features/pedidos";
+import { CarritoPage, CheckoutPage, MisPedidosPage } from "@/features/pedidos";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -18,6 +18,7 @@ export function AppRouter() {
 
       <Route element={<ProtectedRoute />}>
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/mis-pedidos" element={<MisPedidosPage />} />
       </Route>
 
       <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>

@@ -20,6 +20,7 @@ export function useCrearPedido() {
     onSuccess: () => {
       vaciar();
       queryClient.invalidateQueries({ queryKey: ["pedidos"] });
+      queryClient.invalidateQueries({ queryKey: ["catalogo-productos"] });
     },
   });
 }

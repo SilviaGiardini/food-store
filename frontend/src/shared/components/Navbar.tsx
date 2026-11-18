@@ -34,13 +34,21 @@ export function Navbar() {
 
           {usuario && (
             <nav>
-              <ul className="flex items-center gap-4 text-sm font-medium">
+              <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-medium">
                 <li>
                   <Link
                     to="/"
                     className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                   >
                     Catálogo
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/mis-pedidos"
+                    className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                  >
+                    Mis pedidos
                   </Link>
                 </li>
                 {esAdmin && (
