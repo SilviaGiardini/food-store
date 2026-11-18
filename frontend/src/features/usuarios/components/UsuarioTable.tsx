@@ -25,6 +25,7 @@ const columnHelper = createColumnHelper<UsuarioAdmin>();
 
 const sinUsuarios: UsuarioAdmin[] = [];
 
+// Dibuja la tabla de usuarios y muestra las acciones disponibles.
 export function UsuarioTable({
   usuarios,
   onToggleEstado,
@@ -37,6 +38,7 @@ export function UsuarioTable({
     pageSize: 5,
   });
 
+  // Define qué muestra cada columna.
   const columns = useMemo(
     () => [
       columnHelper.accessor("username", {
@@ -124,6 +126,7 @@ export function UsuarioTable({
     [onToggleEstado, procesandoId, usuarioActualId]
   );
 
+  // Conecta los datos y las columnas con TanStack Table.
   const table = useReactTable({
     data: usuarios.length ? usuarios : sinUsuarios,
     columns,

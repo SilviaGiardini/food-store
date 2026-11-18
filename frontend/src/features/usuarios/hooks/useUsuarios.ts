@@ -5,10 +5,12 @@ import { api } from "@/shared/api/axiosInstance";
 import { useNotificationStore } from "@/store/notificationStore";
 import type { UsuarioAdmin } from "../types/usuario";
 
+// Trae la lista de usuarios y prepara la acción para activarlos o desactivarlos.
 export function useUsuarios() {
   const queryClient = useQueryClient();
   const showNotification = useNotificationStore((state) => state.showNotification);
 
+  // Pide al backend todos los usuarios.
   const query = useQuery<UsuarioAdmin[]>({
     queryKey: ["admin-usuarios"],
     queryFn: async () => {
@@ -17,6 +19,7 @@ export function useUsuarios() {
     },
   });
 
+  // Activa o desactiva una cuenta y después refresca la lista.
   const toggleMutation = useMutation({
     mutationFn: async ({ id, estaActivo }: { id: number; estaActivo: boolean }) => {
       const endpoint = estaActivo
@@ -45,12 +48,15 @@ export function useUsuarios() {
     },
   });
 
+  // Decide qué endpoint usar según si el usuario está activo o no.
   const toggleEstadoUsuario = (id: number, estaActivo: boolean) => {
     toggleMutation.mutate({ id, estaActivo });
   };
 
+  // Guarda el id que se está procesando para deshabilitar solo esa fila.
   const procesandoId = toggleMutation.isPending ? toggleMutation.variables?.id ?? null : null;
 
+  // Si la consulta falla, guardamos un mensaje para mostrarlo en pantalla.
   let errorMensaje: string | null = null;
   if (query.isError) {
     const es403 = axios.isAxiosError(query.error) && query.error.response?.status === 403;
