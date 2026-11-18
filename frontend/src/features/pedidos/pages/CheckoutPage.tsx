@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "@tanstack/react-form";
 
 import { handleApiError } from "@/shared/api/handleApiError";
-import { Button } from "@/shared/ui";
+import { Button, Card } from "@/shared/ui";
 import { useCartStore } from "@/store/cartStore";
 import { CarritoVacioEstado } from "../components/CarritoVacioEstado";
 import { useCrearPedido } from "../hooks/useCrearPedido";
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
           </form.Subscribe>
         </form>
 
-        <aside className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 h-fit">
+        <Card className="p-5 h-fit">
           <h2 className="text-lg font-bold text-gray-800 mb-4">Resumen</h2>
 
           <ul className="space-y-2">
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
           >
             Volver al carrito
           </Link>
-        </aside>
+        </Card>
       </div>
     </main>
   );

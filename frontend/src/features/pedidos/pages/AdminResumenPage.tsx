@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { ErrorState } from "@/shared/components/ErrorState";
 import { LoadingState } from "@/shared/components/LoadingState";
+import { Card } from "@/shared/ui";
 import { useResumenPedidos } from "../hooks/useResumenPedidos";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
@@ -30,7 +31,7 @@ function TarjetaResumen({
   colorValor,
 }: TarjetaResumenProps) {
   return (
-    <article className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+    <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-gray-500">{etiqueta}</p>
@@ -44,7 +45,7 @@ function TarjetaResumen({
         </span>
       </div>
       <p className="text-xs text-gray-400 mt-3">{detalle}</p>
-    </article>
+    </Card>
   );
 }
 

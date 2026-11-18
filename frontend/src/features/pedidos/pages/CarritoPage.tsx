@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 
 import { useCartStore } from "@/store/cartStore";
+import { Card } from "@/shared/ui";
 import { CarritoVacioEstado } from "../components/CarritoVacioEstado";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
@@ -32,9 +33,9 @@ export default function CarritoPage() {
 
       <div className="space-y-3">
         {items.map((item) => (
-          <div
+          <Card
             key={item.producto_id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row sm:items-center gap-4"
+            className="p-4 flex flex-col sm:flex-row sm:items-center gap-4"
           >
             <div className="flex-1">
               <h2 className="text-base font-semibold text-gray-800">
@@ -85,11 +86,11 @@ export default function CarritoPage() {
                 Quitar
               </button>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mt-6">
+      <Card className="p-5 mt-6">
         <div className="flex items-center justify-between">
           <span className="text-base font-semibold text-gray-700">Total</span>
           <span className="text-2xl font-bold text-gray-900">
@@ -119,7 +120,7 @@ export default function CarritoPage() {
         >
           Vaciar carrito
         </button>
-      </div>
+      </Card>
     </main>
   );
 }
