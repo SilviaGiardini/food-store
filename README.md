@@ -53,7 +53,7 @@ El frontend está organizado por features y el backend por módulos de dominio.
 ## Requisitos
 
 - Python 3.13
-- PostgreSQL 14 o superior
+- PostgreSQL 15 o superior
 - Node.js 20.19 o superior
 - pnpm 9 o superior
 - Git
