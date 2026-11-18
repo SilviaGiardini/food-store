@@ -1,10 +1,7 @@
 // Tabla de pedidos del panel admin con acciones según el estado.
+import { BadgeEstado } from "@/shared/ui";
 import type { EstadoPedido, Pedido } from "../types/pedido";
-import {
-  etiquetasEstado,
-  estilosEstado,
-  formatearFechaPedido,
-} from "../utils/pedidoFormato";
+import { formatearFechaPedido } from "../utils/pedidoFormato";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -120,11 +117,7 @@ export function AdminPedidoTable({
                   </td>
 
                   <td className="px-4 py-4 align-top">
-                    <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${estilosEstado[pedido.estado]}`}
-                    >
-                      {etiquetasEstado[pedido.estado]}
-                    </span>
+                    <BadgeEstado estado={pedido.estado} />
                   </td>
 
                   <td className="px-4 py-4 align-top">

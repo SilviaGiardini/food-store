@@ -21,12 +21,13 @@ const estilos: Record<EstadoPedidoBadge, string> = {
 
 interface BadgeEstadoProps {
   estado: EstadoPedidoBadge;
+  className?: string;
 }
 
-export function BadgeEstado({ estado }: BadgeEstadoProps) {
+export function BadgeEstado({ estado, className = "" }: BadgeEstadoProps) {
   return (
     <span
-      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${estilos[estado]}`}
+      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${estilos[estado]} ${className}`}
     >
       {etiquetas[estado]}
     </span>

@@ -1,9 +1,8 @@
 // Tarjeta con el detalle de un pedido y el botón para cancelarlo.
+import { BadgeEstado } from "@/shared/ui";
 import type { Pedido } from "../types/pedido";
 import {
-  etiquetasEstado,
   etiquetasPago,
-  estilosEstado,
   formatearFechaPedido,
 } from "../utils/pedidoFormato";
 
@@ -39,11 +38,10 @@ export function PedidoCard({
           </p>
         </div>
 
-        <span
-          className={`self-start sm:self-auto px-3 py-1 rounded-full text-xs font-semibold ${estilosEstado[pedido.estado]}`}
-        >
-          {etiquetasEstado[pedido.estado]}
-        </span>
+        <BadgeEstado
+          estado={pedido.estado}
+          className="self-start sm:self-auto"
+        />
       </div>
 
       <div className="p-5 space-y-4">
