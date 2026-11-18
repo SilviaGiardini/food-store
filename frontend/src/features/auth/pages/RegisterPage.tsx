@@ -39,15 +39,16 @@ export default function RegisterPage() {
       },
     },
     onSubmit: async ({ value }) => {
-      const ok = await registrar({
-        username: value.username,
-        full_name: value.full_name,
-        email: value.email,
-        password: value.password,
-      });
-
-      if (ok) {
+      try {
+        await registrar({
+          username: value.username,
+          full_name: value.full_name,
+          email: value.email,
+          password: value.password,
+        });
         navigate("/login");
+      } catch {
+        // El hook ya muestra el error en el banner y en el toast.
       }
     },
   });
