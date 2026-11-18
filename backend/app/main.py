@@ -22,6 +22,7 @@ from app.modules.pedidos.models import DetallePedido, Pedido
 from app.modules.auth.router import router as auth_router
 from app.modules.usuarios.router import router as usuarios_router
 from app.modules.categorias.router import router as categorias_router
+from app.modules.productos.router import router as productos_router
 
 
 @asynccontextmanager
@@ -51,15 +52,15 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(usuarios_router)
 app.include_router(categorias_router)
+app.include_router(productos_router)
 
 
 @app.get("/health", tags=["health"])
 def health_check():
-    """Comprueba que el servidor esté vivo."""
+    """Comprueba que el servidor esté ok."""
     return {"status": "ok"}
 
 
 @app.get("/", tags=["root"])
 def root():
-    """Mensaje simple para abrir la raíz del servidor."""
     return {"mensaje": "Food Store API. La documentación está en /docs."}
