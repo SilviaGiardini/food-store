@@ -1,7 +1,7 @@
 // Formulario para crear o editar un producto desde el panel admin.
 import { useForm } from "@tanstack/react-form";
 
-import { Button } from "@/shared/ui";
+import { Button, Input } from "@/shared/ui";
 import type { Categoria } from "@/features/categorias";
 import type { Producto, ProductoFormData } from "../types/producto";
 
@@ -108,33 +108,19 @@ export function ProductoModal({
             }}
           >
             {(field) => (
-              <div>
-                <label
-                  htmlFor="nombre"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Nombre del producto
-                </label>
-                <input
-                  id="nombre"
-                  type="text"
-                  className={inputClass}
-                  placeholder="Ej: Pizza napolitana"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(evento) =>
-                    field.handleChange(evento.target.value)
-                  }
-                />
-                {field.state.meta.errors.map((errorValidacion) => (
-                  <p
-                    key={String(errorValidacion)}
-                    className="mt-1 text-xs text-red-500"
-                  >
-                    {String(errorValidacion)}
-                  </p>
-                ))}
-              </div>
+              <Input
+                id="nombre"
+                label="Nombre del producto"
+                placeholder="Ej: Pizza napolitana"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(evento) => field.handleChange(evento.target.value)}
+                error={
+                  field.state.meta.errors[0]
+                    ? String(field.state.meta.errors[0])
+                    : null
+                }
+              />
             )}
           </form.Field>
 
@@ -173,34 +159,23 @@ export function ProductoModal({
               }}
             >
               {(field) => (
-                <div>
-                  <label
-                    htmlFor="precio_base"
-                    className="block text-sm font-medium text-gray-700 mb-1.5"
-                  >
-                    Precio base ($)
-                  </label>
-                  <input
-                    id="precio_base"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className={inputClass}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(evento) =>
-                      field.handleChange(Number(evento.target.value))
-                    }
-                  />
-                  {field.state.meta.errors.map((errorValidacion) => (
-                    <p
-                      key={String(errorValidacion)}
-                      className="mt-1 text-xs text-red-500"
-                    >
-                      {String(errorValidacion)}
-                    </p>
-                  ))}
-                </div>
+                <Input
+                  id="precio_base"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  label="Precio base ($)"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(evento) =>
+                    field.handleChange(Number(evento.target.value))
+                  }
+                  error={
+                    field.state.meta.errors[0]
+                      ? String(field.state.meta.errors[0])
+                      : null
+                  }
+                />
               )}
             </form.Field>
 
@@ -214,34 +189,23 @@ export function ProductoModal({
               }}
             >
               {(field) => (
-                <div>
-                  <label
-                    htmlFor="stock"
-                    className="block text-sm font-medium text-gray-700 mb-1.5"
-                  >
-                    Stock
-                  </label>
-                  <input
-                    id="stock"
-                    type="number"
-                    step="1"
-                    min="0"
-                    className={inputClass}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(evento) =>
-                      field.handleChange(Number(evento.target.value))
-                    }
-                  />
-                  {field.state.meta.errors.map((errorValidacion) => (
-                    <p
-                      key={String(errorValidacion)}
-                      className="mt-1 text-xs text-red-500"
-                    >
-                      {String(errorValidacion)}
-                    </p>
-                  ))}
-                </div>
+                <Input
+                  id="stock"
+                  type="number"
+                  step="1"
+                  min="0"
+                  label="Stock"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(evento) =>
+                    field.handleChange(Number(evento.target.value))
+                  }
+                  error={
+                    field.state.meta.errors[0]
+                      ? String(field.state.meta.errors[0])
+                      : null
+                  }
+                />
               )}
             </form.Field>
           </div>
@@ -291,25 +255,15 @@ export function ProductoModal({
 
           <form.Field name="imagen_url">
             {(field) => (
-              <div>
-                <label
-                  htmlFor="imagen_url"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  URL de la imagen <span className="text-gray-400">(opcional)</span>
-                </label>
-                <input
-                  id="imagen_url"
-                  type="url"
-                  className={inputClass}
-                  placeholder="https://ejemplo.com/producto.jpg"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(evento) =>
-                    field.handleChange(evento.target.value)
-                  }
-                />
-              </div>
+              <Input
+                id="imagen_url"
+                type="url"
+                label="URL de la imagen (opcional)"
+                placeholder="https://ejemplo.com/producto.jpg"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(evento) => field.handleChange(evento.target.value)}
+              />
             )}
           </form.Field>
 

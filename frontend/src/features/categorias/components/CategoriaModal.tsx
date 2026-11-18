@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 
-import { Button } from "@/shared/ui";
+import { Button, Input } from "@/shared/ui";
 import type { Categoria } from "../types/categoria";
 
 interface CategoriaModalProps {
@@ -37,9 +37,6 @@ export function CategoriaModal({
     },
   });
 
-  const inputClass =
-    "w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all";
-
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-4xl shadow-sm border border-gray-100 p-6 mb-8 w-full max-w-md">
@@ -74,53 +71,32 @@ export function CategoriaModal({
             }}
           >
             {(field) => (
-              <div>
-                <label
-                  htmlFor="nombre"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Nombre de la categoría
-                </label>
-                <input
-                  id="nombre"
-                  type="text"
-                  className={inputClass}
-                  placeholder="Ej: Pizzas y Empanadas"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(evento) => field.handleChange(evento.target.value)}
-                />
-                {field.state.meta.errors.map((errorValidacion) => (
-                  <p
-                    key={String(errorValidacion)}
-                    className="mt-1 text-xs text-red-500"
-                  >
-                    {String(errorValidacion)}
-                  </p>
-                ))}
-              </div>
+              <Input
+                id="nombre"
+                label="Nombre de la categoría"
+                placeholder="Ej: Pizzas y Empanadas"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(evento) => field.handleChange(evento.target.value)}
+                error={
+                  field.state.meta.errors[0]
+                    ? String(field.state.meta.errors[0])
+                    : null
+                }
+              />
             )}
           </form.Field>
 
           <form.Field name="descripcion">
             {(field) => (
-              <div>
-                <label
-                  htmlFor="descripcion"
-                  className="block text-sm font-medium text-gray-700 mb-1.5"
-                >
-                  Descripción de la categoría
-                </label>
-                <input
-                  id="descripcion"
-                  type="text"
-                  className={inputClass}
-                  placeholder="Ej: Pizzas caseras a la piedra y empanadas tradicionales"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(evento) => field.handleChange(evento.target.value)}
-                />
-              </div>
+              <Input
+                id="descripcion"
+                label="Descripción de la categoría"
+                placeholder="Ej: Pizzas caseras a la piedra y empanadas tradicionales"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(evento) => field.handleChange(evento.target.value)}
+              />
             )}
           </form.Field>
 
