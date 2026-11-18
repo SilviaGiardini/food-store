@@ -44,7 +44,8 @@ food-store/
 │   │   ├── shared/
 │   │   │   ├── api/        # Axios y TanStack Query
 │   │   │   ├── components/ # Estados, paginación, skeleton y toast
-│   │   │   └── layout/     # Navbar y MainLayout
+│   │   │   ├── layout/     # Navbar y MainLayout
+│   │   │   └── ui/         # Button, Card, Input, Modal y BadgeEstado
 │   │   └── store/         # authStore y cartStore
 │   ├── package.json
 │   └── .env.example
