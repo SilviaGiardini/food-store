@@ -39,9 +39,12 @@ food-store/
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── features/      # auth, categorias, productos y pedidos
+│   │   ├── features/      # auth, categorias, productos, usuarios y pedidos
 │   │   ├── routes/        # AppRouter y ProtectedRoute
-│   │   ├── shared/        # Componentes, API y utilidades compartidas
+│   │   ├── shared/
+│   │   │   ├── api/        # Axios y TanStack Query
+│   │   │   ├── components/ # Estados, paginación, skeleton y toast
+│   │   │   └── layout/     # Navbar y MainLayout
 │   │   └── store/         # authStore y cartStore
 │   ├── package.json
 │   └── .env.example
