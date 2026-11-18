@@ -1,6 +1,6 @@
 """Consultas propias del módulo de pedidos."""
 
-from datetime import date, datetime, time
+from datetime import datetime, time, timezone
 
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
@@ -84,20 +84,36 @@ class PedidoRepository(BaseRepository[Pedido]):
         ).all()
         return {estado: cantidad for estado, cantidad in filas}
 
-    def count_hoy(self) -> int:
-        """Cuenta los pedidos creados en la fecha local del servidor."""
-        inicio_del_dia = datetime.combine(date.today(), time.min)
-        fin_del_dia = datetime.combine(date.today(), time.max)
+    def pedidos_hoy(self) -> int:
+        """Cuenta los pedidos creados en el día local del servidor."""
+        ahora_local = datetime.now().astimezone()
+        inicio_local = datetime.combine(
+            ahora_local.date(),
+            time.min,
+            tzinfo=ahora_local.tzinfo,
+        )
+        fin_local = datetime.combine(
+            ahora_local.date(),
+            time.max,
+            tzinfo=ahora_local.tzinfo,
+        )
+
+        # created_at se guarda en UTC sin zona horaria.
+        inicio_utc = inicio_local.astimezone(timezone.utc).replace(
+            tzinfo=None
+        )
+        fin_utc = fin_local.astimezone(timezone.utc).replace(tzinfo=None)
+
         return self.session.exec(
             select(func.count())
             .select_from(Pedido)
             .where(
-                Pedido.created_at >= inicio_del_dia,
-                Pedido.created_at <= fin_del_dia,
+                Pedido.created_at >= inicio_utc,
+                Pedido.created_at <= fin_utc,
             )
         ).one()
 
-    def sum_ingresos_entregados(self) -> float:
+    def ingresos_entregados(self) -> float:
         """Suma el total de los pedidos entregados."""
         total = self.session.exec(
             select(func.coalesce(func.sum(Pedido.total), 0.0)).where(
