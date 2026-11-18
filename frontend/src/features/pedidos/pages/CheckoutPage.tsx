@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "@tanstack/react-form";
 
 import { handleApiError } from "@/shared/api/handleApiError";
+import { Button } from "@/shared/ui";
 import { useCartStore } from "@/store/cartStore";
 import { CarritoVacioEstado } from "../components/CarritoVacioEstado";
 import { useCrearPedido } from "../hooks/useCrearPedido";
@@ -197,15 +198,15 @@ export default function CheckoutPage() {
 
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting || crearPedido.isPending}
-                className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full"
               >
                 {isSubmitting || crearPedido.isPending
                   ? "Confirmando..."
                   : "Confirmar pedido"}
-              </button>
+              </Button>
             )}
           </form.Subscribe>
         </form>

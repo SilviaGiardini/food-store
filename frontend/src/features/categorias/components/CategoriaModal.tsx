@@ -1,5 +1,7 @@
-import type { Categoria } from "../types/categoria";
 import { useForm } from "@tanstack/react-form";
+
+import { Button } from "@/shared/ui";
+import type { Categoria } from "../types/categoria";
 
 interface CategoriaModalProps {
   cerrarModal: () => void;
@@ -123,25 +125,17 @@ export function CategoriaModal({
           </form.Field>
 
           <div className="flex justify-end gap-2 pt-3">
-            <button
-              type="button"
-              onClick={cerrarModal}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors cursor-pointer"
-            >
+            <Button variant="secondary" onClick={cerrarModal}>
               Cancelar
-            </button>
+            </Button>
 
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
             >
               {([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
-                  disabled={!canSubmit}
-                  className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <Button type="submit" disabled={!canSubmit}>
                   {isSubmitting ? "Guardando..." : "Guardar"}
-                </button>
+                </Button>
               )}
             </form.Subscribe>
           </div>

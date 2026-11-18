@@ -1,6 +1,7 @@
 // Formulario para crear o editar un producto desde el panel admin.
 import { useForm } from "@tanstack/react-form";
 
+import { Button } from "@/shared/ui";
 import type { Categoria } from "@/features/categorias";
 import type { Producto, ProductoFormData } from "../types/producto";
 
@@ -341,27 +342,22 @@ export function ProductoModal({
           )}
 
           <div className="flex justify-end gap-2 pt-4">
-            <button
-              type="button"
-              onClick={cerrarModal}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors cursor-pointer"
-            >
+            <Button variant="secondary" onClick={cerrarModal}>
               Cancelar
-            </button>
+            </Button>
 
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
             >
               {([canSubmit, isSubmitting]) => (
-                <button
+                <Button
                   type="submit"
                   disabled={
                     !canSubmit || categoriasDisponibles.length === 0
                   }
-                  className="px-5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors cursor-pointer shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Guardando..." : "Guardar"}
-                </button>
+                </Button>
               )}
             </form.Subscribe>
           </div>

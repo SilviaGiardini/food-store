@@ -1,5 +1,5 @@
 // Tarjeta con el detalle de un pedido y el botón para cancelarlo.
-import { BadgeEstado } from "@/shared/ui";
+import { BadgeEstado, Button } from "@/shared/ui";
 import type { Pedido } from "../types/pedido";
 import {
   etiquetasPago,
@@ -90,14 +90,13 @@ export function PedidoCard({
           </p>
 
           {puedeCancelar && (
-            <button
-              type="button"
+            <Button
+              variant="danger"
               onClick={() => onCancelar(pedido)}
               disabled={cancelando}
-              className="px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {cancelando ? "Cancelando..." : "Cancelar pedido"}
-            </button>
+            </Button>
           )}
         </div>
       </div>
