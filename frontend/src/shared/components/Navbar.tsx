@@ -1,10 +1,11 @@
+// Barra de navegación: sesión, rol y accesos.
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth";
 import { useThemeStore } from "@/store/themeStore";
 
 export function Navbar() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { usuario, logout } = useAuth();
   const { darkMode, toggleTheme } = useThemeStore();
 
   const handleLogout = async () => {
@@ -12,7 +13,7 @@ export function Navbar() {
     navigate("/login");
   };
 
-  const esAdmin = user?.roles?.includes("admin");
+  const esAdmin = usuario?.role === "admin";
 
   return (
     <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shadow-sm transition-colors">
@@ -25,7 +26,7 @@ export function Navbar() {
             🍔 Food Store
           </Link>
 
-          {user && (
+          {usuario && (
             <nav>
               <ul className="flex items-center gap-4 text-sm font-medium">
                 <li>
@@ -73,14 +74,14 @@ export function Navbar() {
             {darkMode ? "☀️" : "🌙"}
           </button>
 
-          {user ? (
+          {usuario ? (
             <div className="flex items-center gap-3 text-sm">
               <div className="text-right">
                 <span className="font-semibold text-gray-800 dark:text-slate-100 block">
-                  {user.nombre} {user.apellido}
+                  {usuario.full_name}
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 font-medium">
-                  {user.roles?.join(", ") || "usuario"}
+                  {usuario.role}
                 </span>
               </div>
               <button

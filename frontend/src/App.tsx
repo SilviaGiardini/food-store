@@ -1,3 +1,4 @@
+// Arma la aplicación y verifica la sesión al iniciar.
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { AppRouter } from "@/routes/AppRouter";
@@ -6,15 +7,13 @@ import { Footer } from "@/shared/components/Footer";
 import { Toast } from "@/shared/components/Toast";
 import { useThemeStore } from "@/store/themeStore";
 
-// Componente principal: compone la estructura general, verifica sesión y monta el router
 function App() {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const checkSession = useAuthStore((state) => state.checkSession);
   const darkMode = useThemeStore((state) => state.darkMode);
 
-  // Verificamos si existe una sesión activa al cargar la aplicación
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    checkSession();
+  }, [checkSession]);
 
   return (
     <div className={`min-h-screen flex flex-col justify-between transition-colors ${

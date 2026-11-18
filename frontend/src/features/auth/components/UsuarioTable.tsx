@@ -1,3 +1,4 @@
+// Tabla de usuarios con activar/desactivar.
 import type { UsuarioAdmin } from "../types/auth.types";
 
 interface UsuarioTableProps {
@@ -19,7 +20,7 @@ export function UsuarioTable({
             <tr>
               <th className="py-3.5 px-4">Usuario</th>
               <th className="py-3.5 px-4">Email</th>
-              <th className="py-3.5 px-4">Roles</th>
+              <th className="py-3.5 px-4">Rol</th>
               <th className="py-3.5 px-4 text-center">Estado</th>
               <th className="py-3.5 px-4 text-center">Acciones</th>
             </tr>
@@ -33,18 +34,16 @@ export function UsuarioTable({
               </tr>
             ) : (
               usuarios.map((usuario) => {
-                const estaActivo = !usuario.deleted_at;
+                const estaActivo = !usuario.disabled;
                 const enProceso = procesandoId === usuario.id;
 
                 return (
                   <tr key={usuario.id} className="hover:bg-gray-50/60 transition-colors">
                     <td className="py-3 px-4 font-medium text-gray-900">
-                      {usuario.nombre} {usuario.apellido}
-                      {usuario.celular && (
-                        <span className="block text-xs font-normal text-gray-400">
-                          📞 {usuario.celular}
-                        </span>
-                      )}
+                      {usuario.full_name}
+                      <span className="block text-xs font-normal text-gray-400">
+                        @{usuario.username}
+                      </span>
                     </td>
 
                     <td className="py-3 px-4 text-gray-600 font-mono text-xs">
@@ -52,16 +51,9 @@ export function UsuarioTable({
                     </td>
 
                     <td className="py-3 px-4">
-                      <div className="flex flex-wrap gap-1">
-                        {usuario.roles.map((rol) => (
-                          <span
-                            key={rol}
-                            className="px-2 py-0.5 text-xs font-medium bg-orange-50 text-orange-700 rounded-md border border-orange-200"
-                          >
-                            {rol}
-                          </span>
-                        ))}
-                      </div>
+                      <span className="px-2 py-0.5 text-xs font-medium bg-orange-50 text-orange-700 rounded-md border border-orange-200">
+                        {usuario.role}
+                      </span>
                     </td>
 
                     <td className="py-3 px-4 text-center">

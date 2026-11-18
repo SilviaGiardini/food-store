@@ -1,3 +1,4 @@
+// Tabla de categorías con acciones de administrador.
 import { useMemo, useState } from "react";
 import type { Categoria } from "../types/categoria";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -36,8 +37,8 @@ export default function CategoriaList({
     pageSize: 5,
   });
 
-  const user = useAuthStore((state) => state.user);
-  const esAdmin = Boolean(user?.roles?.includes("admin"));
+  const usuario = useAuthStore((state) => state.usuario);
+  const esAdmin = usuario?.role === "admin";
 
   const columns = useMemo(
     () => [

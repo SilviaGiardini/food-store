@@ -1,3 +1,4 @@
+// Envía el registro de un usuario nuevo.
 import { useState } from "react";
 import axios from "axios";
 import { api } from "@/shared/api/axiosInstance";
@@ -15,10 +16,9 @@ export function useRegister() {
 
     try {
       await api.post("/auth/register", {
-        nombre: datos.nombre.trim(),
-        apellido: datos.apellido.trim(),
+        username: datos.username.trim(),
+        full_name: datos.full_name.trim(),
         email: datos.email.trim(),
-        celular: datos.celular?.trim() ? datos.celular.trim() : null,
         password: datos.password,
       });
 

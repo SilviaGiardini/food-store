@@ -1,3 +1,4 @@
+// Tabla de productos con acciones de administrador.
 import { useMemo, useState } from "react";
 import type { Producto } from "../types/producto";
 import { EmptyState } from "@/shared/components/EmptyState";
@@ -42,8 +43,8 @@ export default function ProductoList({
     pageSize: 5,
   });
 
-  const user = useAuthStore((state) => state.user);
-  const esAdmin = Boolean(user?.roles?.includes("admin"));
+  const usuario = useAuthStore((state) => state.usuario);
+  const esAdmin = usuario?.role === "admin";
 
   // Definición de las columnas de la tabla
   const columns = useMemo(

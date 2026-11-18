@@ -1,3 +1,4 @@
+// Consulta y cambia el estado de los usuarios desde el panel admin.
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { api } from "@/shared/api/axiosInstance";

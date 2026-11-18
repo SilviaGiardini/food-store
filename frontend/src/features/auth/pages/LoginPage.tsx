@@ -1,40 +1,38 @@
+// Pantalla de login: formulario y mensajes de error.
 import { useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "@tanstack/react-form";
 import { useAuth } from "../hooks/useAuth";
 import { useNotificationStore } from "@/store/notificationStore";
 
-// Componente de página para inicio de sesión
 export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const showNotification = useNotificationStore((state) => state.showNotification);
 
-  const { login, procesandoLogin, error, limpiarError, user } = useAuth();
+  const { login, procesandoLogin, error, limpiarError, usuario } = useAuth();
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? "/categories";
 
   useEffect(() => {
-    if (user) {
+    if (usuario) {
       navigate(from, { replace: true });
     }
-  }, [user, navigate, from]);
+  }, [usuario, navigate, from]);
 
-  // Limpiamos los mensajes de error al montar el componente
   useEffect(() => {
     limpiarError();
   }, [limpiarError]);
 
-  // Configuramos el formulario con TanStack Form
   const form = useForm({
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
     validators: {
       onSubmit: ({ value }) => {
-        if (!value.email.trim()) {
-          return { fields: { email: "El email es obligatorio" } };
+        if (!value.username.trim()) {
+          return { fields: { username: "El usuario es obligatorio" } };
         }
         if (!value.password) {
           return { fields: { password: "La contraseña es obligatoria" } };
@@ -44,32 +42,28 @@ export default function LoginPage() {
     },
     onSubmit: async ({ value }) => {
       try {
-        // Intentamos iniciar sesión con los datos ingresados
-        await login(value.email.trim(), value.password);
+        await login(value.username.trim(), value.password);
         showNotification("Inicio de sesión exitoso", "success");
         navigate(from, { replace: true });
       } catch {
-        // El error ya es capturado y seteado en el hook useAuth
+        // El error ya queda guardado en el authStore.
       }
     },
   });
 
-  // Clase común para los inputs de Tailwind
   const inputClass =
     "w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all";
 
   return (
     <div className="flex-1 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
-        {/* Encabezado del formulario */}
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Iniciar Sesión</h2>
           <p className="text-sm text-gray-500 mt-1">
-            Ingresa tus credenciales para acceder al sistema
+            Ingresá tus credenciales para acceder al sistema
           </p>
         </div>
 
-        {/* Mensaje de error si falla la autenticación */}
         {error && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center gap-2">
             <span>⚠️</span>
@@ -77,7 +71,6 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Formulario de login */}
         <form
           onSubmit={(evento) => {
             evento.preventDefault();
@@ -85,34 +78,26 @@ export default function LoginPage() {
           }}
           className="space-y-4"
         >
-          {/* Campo de Correo Electrónico */}
           <form.Field
-            name="email"
+            name="username"
             validators={{
-              onChange: ({ value }) => {
-                if (!value.trim()) return undefined;
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return !emailRegex.test(value)
-                  ? "Formato de email inválido"
-                  : undefined;
-              },
               onBlur: ({ value }) =>
-                !value.trim() ? "El email es obligatorio" : undefined,
+                !value.trim() ? "El usuario es obligatorio" : undefined,
             }}
           >
             {(field) => (
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium text-gray-700 mb-1.5"
                 >
-                  Correo Electrónico
+                  Usuario
                 </label>
                 <input
-                  id="email"
-                  type="email"
+                  id="username"
+                  type="text"
                   className={inputClass}
-                  placeholder="usuario@ejemplo.com"
+                  placeholder="admin"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(evento) => field.handleChange(evento.target.value)}
@@ -126,7 +111,6 @@ export default function LoginPage() {
             )}
           </form.Field>
 
-          {/* Campo de Contraseña */}
           <form.Field
             name="password"
             validators={{
@@ -160,7 +144,6 @@ export default function LoginPage() {
             )}
           </form.Field>
 
-          {/* Botón de envío */}
           <button
             type="submit"
             disabled={procesandoLogin}
@@ -170,14 +153,13 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Enlace para registrarse */}
         <p className="mt-6 text-center text-sm text-gray-600">
-          ¿No tienes una cuenta?{" "}
+          ¿No tenés una cuenta?{" "}
           <Link
             to="/register"
             className="text-orange-600 hover:text-orange-700 font-semibold hover:underline"
           >
-            Regístrate aquí
+            Registrate acá
           </Link>
         </p>
       </div>

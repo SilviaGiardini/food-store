@@ -1,3 +1,4 @@
+// Protege las rutas según la sesión y el rol.
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { LoadingState } from "@/shared/components/LoadingState";
@@ -8,15 +9,15 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const location = useLocation();
-  const status = useAuthStore((state) => state.status);
+  const cargando = useAuthStore((state) => state.cargando);
+  const usuario = useAuthStore((state) => state.usuario);
   const hasRole = useAuthStore((state) => state.hasRole);
-  const user = useAuthStore((state) => state.user);
 
-  if (status === "checking") {
+  if (cargando) {
     return <LoadingState mensaje="Verificando sesión..." />;
   }
 
-  if (status === "unauthenticated" || !user) {
+  if (!usuario) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

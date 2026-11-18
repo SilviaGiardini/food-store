@@ -1,111 +1,98 @@
+// Maneja la sesión: login, logout y recuperación del usuario logueado.
 import { create } from "zustand";
-import axios from "axios";
+import { persist } from "zustand/middleware";
+
 import { api } from "@/shared/api/axiosInstance";
+import { handleApiError } from "@/shared/api/handleApiError";
 import type { UsuarioAuth } from "@/features/auth/types/auth.types";
 
-export type AuthStatus = "checking" | "authenticated" | "unauthenticated";
-
 export interface AuthState {
-  user: UsuarioAuth | null;
-  status: AuthStatus;
+  usuario: UsuarioAuth | null;
+  cargando: boolean;
   procesandoLogin: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  checkAuth: () => Promise<void>;
+  checkSession: () => Promise<void>;
   hasRole: (...roles: string[]) => boolean;
   limpiarError: () => void;
   limpiarSesion: () => void;
 }
 
-// Store global de autenticación gestionado con Zustand sin persistencia en storage.
-// La sesión se valida directamente contra el backend mediante la cookie HttpOnly.
-export const useAuthStore = create<AuthState>()((set, get) => ({
-  user: null,
-  status: "checking",
-  procesandoLogin: false,
-  error: null,
-
-  login: async (email: string, password: string) => {
-    set({ procesandoLogin: true, error: null });
-    try {
-      const params = new URLSearchParams();
-      params.append("username", email);
-      params.append("password", password);
-
-      await api.post("/auth/token", params, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
-
-      await get().checkAuth();
-    } catch (err: unknown) {
-      let mensaje = "Error al iniciar sesión";
-      if (axios.isAxiosError(err)) {
-        if (err.response?.data?.detail) {
-          mensaje =
-            typeof err.response.data.detail === "string"
-              ? err.response.data.detail
-              : "Credenciales inválidas";
-        } else if (!err.response) {
-          mensaje = "No se pudo conectar con el servidor";
-        }
-      } else if (err instanceof Error) {
-        mensaje = err.message;
-      }
-      set({ user: null, status: "unauthenticated", error: mensaje });
-      throw err;
-    } finally {
-      set({ procesandoLogin: false });
-    }
-  },
-
-  limpiarSesion: () => {
-    set({
-      user: null,
-      status: "unauthenticated",
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      usuario: null,
+      cargando: true,
+      procesandoLogin: false,
       error: null,
-    });
-  },
 
-  logout: async () => {
-    try {
-      await api.post("/auth/logout");
-    } catch {
-      // Ignoramos error del servidor al desloguear
-    } finally {
-      get().limpiarSesion();
+      login: async (username: string, password: string) => {
+        set({ procesandoLogin: true, error: null });
+        try {
+          const params = new URLSearchParams();
+          params.append("username", username);
+          params.append("password", password);
+
+          await api.post("/auth/token", params, {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          });
+
+          await get().checkSession();
+          if (!get().usuario) {
+            throw new Error("No se pudo recuperar la sesión");
+          }
+        } catch (err: unknown) {
+          const mensaje = handleApiError(
+            err,
+            "Error al iniciar sesión"
+          );
+          set({ usuario: null, cargando: false, error: mensaje });
+          throw err;
+        } finally {
+          set({ procesandoLogin: false });
+        }
+      },
+
+      logout: async () => {
+        try {
+          await api.post("/auth/logout");
+        } catch {
+          // Si el servidor falla, igual cerramos la sesión local.
+        } finally {
+          get().limpiarSesion();
+        }
+      },
+
+      checkSession: async () => {
+        try {
+          const res = await api.get<UsuarioAuth>("/auth/me");
+          set({ usuario: res.data, cargando: false });
+        } catch {
+          set({ usuario: null, cargando: false });
+        }
+      },
+
+      hasRole: (...roles: string[]) => {
+        const usuario = get().usuario;
+        return usuario ? roles.includes(usuario.role) : false;
+      },
+
+      limpiarError: () => {
+        set({ error: null });
+      },
+
+      limpiarSesion: () => {
+        set({ usuario: null, cargando: false, error: null });
+      },
+    }),
+    {
+      name: "auth-storage",
+      partialize: (state) => ({ usuario: state.usuario }),
     }
-  },
-
-  checkAuth: async () => {
-    try {
-      const res = await api.get<UsuarioAuth>("/auth/me");
-      set({
-        user: res.data,
-        status: "authenticated",
-      });
-    } catch {
-      set({
-        user: null,
-        status: "unauthenticated",
-      });
-    }
-  },
-
-  hasRole: (...roles: string[]) => {
-    const user = get().user;
-    if (!user) return false;
-    if (user.roles && Array.isArray(user.roles)) {
-      return roles.some((rol) => user.roles.includes(rol));
-    }
-    return false;
-  },
-
-  limpiarError: () => {
-    set({ error: null });
-  },
-}));
+  )
+);
 
 export default useAuthStore;
