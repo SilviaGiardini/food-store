@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { api } from "@/shared/api/api";
+import { api } from "@/shared/api/axiosInstance";
 import { useNotificationStore } from "@/store/notificationStore";
 import type { RegistroUsuario } from "../types/auth.types";
 
@@ -14,7 +14,7 @@ export function useRegister() {
     setCargando(true);
 
     try {
-      await api.post("/api/v1/auth/register", {
+      await api.post("/auth/register", {
         nombre: datos.nombre.trim(),
         apellido: datos.apellido.trim(),
         email: datos.email.trim(),

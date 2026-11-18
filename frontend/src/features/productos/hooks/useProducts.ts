@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { api } from '@/shared/api/api';
+import { api } from '@/shared/api/axiosInstance';
 import { useNotificationStore } from '@/store/notificationStore';
 import type { Producto, ProductoFormData } from '../types/producto';
 
@@ -13,7 +13,7 @@ export function useProducts() {
   const query = useQuery<Producto[]>({
     queryKey: ['productos'],
     queryFn: async () => {
-      const res = await api.get<Producto[]>('/productos/?limit=100');
+      const res = await api.get<Producto[]>('/productos?limit=100');
       return res.data;
     },
   });
@@ -21,7 +21,7 @@ export function useProducts() {
   // Mutación POST para crear un nuevo producto
   const crearMutation = useMutation({
     mutationFn: async (nuevoProducto: ProductoFormData) => {
-      const res = await api.post<Producto>('/productos/', {
+      const res = await api.post<Producto>('/productos', {
         nombre: nuevoProducto.nombre,
         descripcion: nuevoProducto.descripcion ?? null,
         precio_base: nuevoProducto.precio_base,

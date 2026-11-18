@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-import { api } from "@/shared/api/api";
+import { api } from "@/shared/api/axiosInstance";
 import type { UsuarioAuth } from "@/features/auth/types/auth.types";
 
 export type AuthStatus = "checking" | "authenticated" | "unauthenticated";
@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       params.append("username", email);
       params.append("password", password);
 
-      await api.post("/api/v1/auth/token", params, {
+      await api.post("/auth/token", params, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   logout: async () => {
     try {
-      await api.post("/api/v1/auth/logout");
+      await api.post("/auth/logout");
     } catch {
       // Ignoramos error del servidor al desloguear
     } finally {
@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   checkAuth: async () => {
     try {
-      const res = await api.get<UsuarioAuth>("/api/v1/auth/me");
+      const res = await api.get<UsuarioAuth>("/auth/me");
       set({
         user: res.data,
         status: "authenticated",

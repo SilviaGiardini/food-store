@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { api } from '@/shared/api/api';
+import { api } from '@/shared/api/axiosInstance';
 import { useNotificationStore } from '@/store/notificationStore';
 import type { Categoria } from '../types/categoria';
 
@@ -13,7 +13,7 @@ export function useCategories() {
   const query = useQuery<Categoria[]>({
     queryKey: ['categorias'],
     queryFn: async () => {
-      const res = await api.get<Categoria[]>('/categorias/?limit=100');
+      const res = await api.get<Categoria[]>('/categorias?limit=100');
       return res.data;
     },
   });
@@ -21,7 +21,7 @@ export function useCategories() {
   // Mutación POST para crear una nueva categoría
   const crearMutation = useMutation({
     mutationFn: async (nueva: { nombre: string; descripcion: string }) => {
-      const res = await api.post<Categoria>('/categorias/', nueva);
+      const res = await api.post<Categoria>('/categorias', nueva);
       return res.data;
     },
     onSuccess: () => {

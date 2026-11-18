@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { api } from "@/shared/api/api";
+import { api } from "@/shared/api/axiosInstance";
 import { useNotificationStore } from "@/store/notificationStore";
 import type { UsuarioAdmin } from "../types/auth.types";
 
@@ -11,7 +11,7 @@ export function useAdminUsers() {
   const query = useQuery<UsuarioAdmin[]>({
     queryKey: ["admin-usuarios"],
     queryFn: async () => {
-      const res = await api.get<UsuarioAdmin[]>("/api/v1/auth/admin/usuarios");
+      const res = await api.get<UsuarioAdmin[]>("/admin/usuarios");
       return res.data;
     },
   });
@@ -19,8 +19,8 @@ export function useAdminUsers() {
   const toggleMutation = useMutation({
     mutationFn: async ({ id, estaActivo }: { id: number; estaActivo: boolean }) => {
       const endpoint = estaActivo
-        ? `/api/v1/auth/admin/usuarios/${id}/desactivar`
-        : `/api/v1/auth/admin/usuarios/${id}/activar`;
+        ? `/admin/usuarios/${id}/desactivar`
+        : `/admin/usuarios/${id}/activar`;
       await api.post(endpoint);
       return { id, estaActivo };
     },
