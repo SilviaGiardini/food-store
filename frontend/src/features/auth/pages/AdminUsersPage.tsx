@@ -1,10 +1,12 @@
 import { LoadingState } from "@/shared/components/LoadingState";
 import { ErrorState } from "@/shared/components/ErrorState";
 import { useAdminUsers } from "../hooks/useAdminUsers";
+import { useAuth } from "../hooks/useAuth";
 import { UsuarioTable } from "../components/UsuarioTable";
 
 // Componente para que los administradores gestionen las cuentas de usuario
 export default function AdminUsersPage() {
+  const { usuario } = useAuth();
   const { usuarios, cargando, actualizando, error, procesandoId, toggleEstadoUsuario, recargar } =
     useAdminUsers();
 
@@ -42,6 +44,7 @@ export default function AdminUsersPage() {
           usuarios={usuarios}
           onToggleEstado={toggleEstadoUsuario}
           procesandoId={procesandoId}
+          usuarioActualId={usuario?.id ?? null}
         />
       )}
     </main>
