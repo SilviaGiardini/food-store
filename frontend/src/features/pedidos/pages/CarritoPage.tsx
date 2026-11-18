@@ -1,8 +1,8 @@
 // Página del carrito: ítems, cantidades y total.
 import { Link } from "react-router-dom";
 
-import { EmptyState } from "@/shared/components/EmptyState";
 import { useCartStore } from "@/store/cartStore";
+import { CarritoVacioEstado } from "../components/CarritoVacioEstado";
 
 const formatoPrecio = new Intl.NumberFormat("es-AR", {
   style: "currency",
@@ -21,15 +21,7 @@ export default function CarritoPage() {
     return (
       <main className="max-w-4xl mx-auto px-4 py-8 w-full">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Carrito</h1>
-        <EmptyState mensaje="Tu carrito está vacío." />
-        <div className="text-center mt-4">
-          <Link
-            to="/"
-            className="inline-block px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold rounded-lg transition-colors"
-          >
-            Ver catálogo
-          </Link>
-        </div>
+        <CarritoVacioEstado />
       </main>
     );
   }
