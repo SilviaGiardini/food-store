@@ -20,7 +20,7 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <Link
-            to="/categories"
+            to="/"
             className="text-2xl font-bold text-orange-600 hover:text-orange-700 transition-colors"
           >
             🍔 Food Store
@@ -31,21 +31,22 @@ export function Navbar() {
               <ul className="flex items-center gap-4 text-sm font-medium">
                 <li>
                   <Link
-                    to="/categories"
+                    to="/"
                     className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                   >
-                    Categorías
+                    Catálogo
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/products"
-                    className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
-                  >
-                    Productos
-                  </Link>
-                </li>
-                {/* Enlace exclusivo para administradores */}
+                {esAdmin && (
+                  <li>
+                    <Link
+                      to="/categories"
+                      className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                    >
+                      Categorías
+                    </Link>
+                  </li>
+                )}
                 {esAdmin && (
                   <li>
                     <Link

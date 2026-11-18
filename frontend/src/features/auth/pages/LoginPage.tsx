@@ -12,7 +12,7 @@ export default function LoginPage() {
 
   const { login, procesandoLogin, error, limpiarError, usuario } = useAuth();
 
-  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? "/categories";
+  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? "/";
 
   useEffect(() => {
     if (usuario) {
