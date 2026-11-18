@@ -45,10 +45,6 @@ export interface PedidosPaginados {
   items: Pedido[];
 }
 
-export interface CambioEstado {
-  estado: EstadoPedido;
-}
-
 export interface ResumenPedidos {
   pendientes: number;
   en_preparacion: number;

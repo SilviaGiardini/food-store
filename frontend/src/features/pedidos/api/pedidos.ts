@@ -8,7 +8,7 @@ import type {
   ResumenPedidos,
 } from "../types/pedido";
 
-export interface FiltrosPedidos {
+interface FiltrosPedidos {
   skip?: number;
   limit?: number;
   estado?: EstadoPedido;

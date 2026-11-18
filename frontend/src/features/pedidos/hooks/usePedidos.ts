@@ -14,7 +14,6 @@ export function usePedidos() {
 
   return {
     pedidos: query.data?.items ?? [],
-    total: query.data?.total ?? 0,
     cargando: query.isPending,
     error: query.isError,
   };

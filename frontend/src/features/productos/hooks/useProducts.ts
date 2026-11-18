@@ -96,7 +96,6 @@ export function useProducts() {
 
   return {
     productos: query.data?.items ?? [],
-    total: query.data?.total ?? 0,
     isPending: query.isPending,
     isError: query.isError,
     crearProducto: crearMutation.mutateAsync,

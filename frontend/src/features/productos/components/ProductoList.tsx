@@ -2,7 +2,6 @@
 import { useMemo, useState } from "react";
 import type { Producto } from "../types/producto";
 import { EmptyState } from "@/shared/components/EmptyState";
-import { useAuthStore } from "@/store/authStore";
 import {
   flexRender,
   getCoreRowModel,
@@ -49,9 +48,6 @@ export default function ProductoList({
     pageIndex: 0,
     pageSize: 5,
   });
-
-  const usuario = useAuthStore((state) => state.usuario);
-  const esAdmin = usuario?.role === "admin";
 
   const columns = useMemo(
     () => [
@@ -144,32 +140,28 @@ export default function ProductoList({
           );
         },
       }),
-      ...(esAdmin
-        ? [
-            columnHelper.display({
-              id: "acciones",
-              header: "ACCIONES",
-              cell: ({ row }) => (
-                <div className="flex justify-center items-center gap-3 text-xs">
-                  <button
-                    className="font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
-                    type="button"
-                    onClick={() => onEditar(row.original)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="font-semibold text-red-600 hover:text-red-800 cursor-pointer"
-                    type="button"
-                    onClick={() => onEliminar(row.original.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ),
-            }),
-          ]
-        : []),
+      columnHelper.display({
+        id: "acciones",
+        header: "ACCIONES",
+        cell: ({ row }) => (
+          <div className="flex justify-center items-center gap-3 text-xs">
+            <button
+              className="font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+              type="button"
+              onClick={() => onEditar(row.original)}
+            >
+              Editar
+            </button>
+            <button
+              className="font-semibold text-red-600 hover:text-red-800 cursor-pointer"
+              type="button"
+              onClick={() => onEliminar(row.original.id)}
+            >
+              Eliminar
+            </button>
+          </div>
+        ),
+      }),
     ],
     [
       onAjustarStock,
@@ -177,7 +169,6 @@ export default function ProductoList({
       onEliminar,
       onToggleDisponible,
       productoActualizando,
-      esAdmin,
     ]
   );
 
@@ -198,15 +189,13 @@ export default function ProductoList({
         <h2 className="text-lg font-bold text-gray-800">
           Productos ({productos.length})
         </h2>
-        {esAdmin && (
-          <button
-            className="w-full sm:w-auto bg-orange-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-700 transition-colors text-sm font-medium shadow-sm"
-            type="button"
-            onClick={() => onAñadirProducto()}
-          >
-            + Nuevo producto
-          </button>
-        )}
+        <button
+          className="w-full sm:w-auto bg-orange-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-700 transition-colors text-sm font-medium shadow-sm"
+          type="button"
+          onClick={() => onAñadirProducto()}
+        >
+          + Nuevo producto
+        </button>
       </div>
 
       {productos.length === 0 ? (

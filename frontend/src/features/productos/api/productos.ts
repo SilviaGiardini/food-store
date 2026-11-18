@@ -6,7 +6,7 @@ import type {
   ProductosPaginados,
 } from "../types/producto";
 
-export interface FiltrosProductos {
+interface FiltrosProductos {
   skip?: number;
   limit?: number;
   search?: string;
@@ -14,7 +14,7 @@ export interface FiltrosProductos {
   disponible?: boolean;
 }
 
-export interface CambioStockProducto {
+interface CambioStockProducto {
   id: number;
   stock: number;
   disponible: boolean;

@@ -2,7 +2,6 @@
 import { useMemo, useState } from "react";
 import type { Categoria } from "../types/categoria";
 import { EmptyState } from "@/shared/components/EmptyState";
-import { useAuthStore } from "@/store/authStore";
 import {
   flexRender,
   getCoreRowModel,
@@ -37,9 +36,6 @@ export default function CategoriaList({
     pageSize: 5,
   });
 
-  const usuario = useAuthStore((state) => state.usuario);
-  const esAdmin = usuario?.role === "admin";
-
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
@@ -63,35 +59,30 @@ export default function CategoriaList({
         },
       }),
 
-      // Solo los administradores pueden ver y usar la columna de acciones (editar/eliminar)
-      ...(esAdmin
-        ? [
-            columnHelper.display({
-              id: "acciones",
-              header: "ACCIONES",
-              cell: ({ row }) => (
-                <div className="flex justify-center items-center gap-3 text-xs">
-                  <button
-                    className="font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
-                    type="button"
-                    onClick={() => onEditar(row.original)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    className="font-semibold text-red-600 hover:text-red-800 cursor-pointer"
-                    type="button"
-                    onClick={() => onEliminar(row.original.id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ),
-            }),
-          ]
-        : []),
+      columnHelper.display({
+        id: "acciones",
+        header: "ACCIONES",
+        cell: ({ row }) => (
+          <div className="flex justify-center items-center gap-3 text-xs">
+            <button
+              className="font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+              type="button"
+              onClick={() => onEditar(row.original)}
+            >
+              Editar
+            </button>
+            <button
+              className="font-semibold text-red-600 hover:text-red-800 cursor-pointer"
+              type="button"
+              onClick={() => onEliminar(row.original.id)}
+            >
+              Eliminar
+            </button>
+          </div>
+        ),
+      }),
     ],
-    [onEditar, onEliminar, esAdmin]
+    [onEditar, onEliminar]
   );
 
   const table = useReactTable({
@@ -111,16 +102,13 @@ export default function CategoriaList({
         <h2 className="text-lg font-bold text-gray-800">
           Categorías ({categorias.length})
         </h2>
-        {/* Solo mostramos el botón de añadir si el usuario es administrador */}
-        {esAdmin && (
-          <button
-            className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm"
-            type="button"
-            onClick={() => onAñadirCategoria()}
-          >
-            + Nueva categoría
-          </button>
-        )}
+        <button
+          className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm"
+          type="button"
+          onClick={() => onAñadirCategoria()}
+        >
+          + Nueva categoría
+        </button>
       </div>
 
       {categorias.length === 0 ? (

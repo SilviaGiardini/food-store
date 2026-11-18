@@ -17,19 +17,18 @@ export default function CategoriesPage() {
     eliminarCategoria,
   } = useCategories();
 
-  // Estados locales para el modal
   const [modalAbierto, setModalAbierto] = useState(false);
   const [categoriaEditar, setCategoriaEditar] = useState<Categoria | null>(null);
   const [errorModal, setErrorModal] = useState<string | null>(null);
 
-  // Abre el modal limpio para crear una nueva categoría
+  // Abre el modal para crear una categoría.
   const handleCreate = () => {
     setErrorModal(null);
     setCategoriaEditar(null);
     setModalAbierto(true);
   };
 
-  // Abre el modal precargado con los datos para editar
+  // Abre el modal con la categoría que se quiere editar.
   const handleUpdate = (categoriaSeleccionada: Categoria) => {
     setErrorModal(null);
     setCategoriaEditar(categoriaSeleccionada);

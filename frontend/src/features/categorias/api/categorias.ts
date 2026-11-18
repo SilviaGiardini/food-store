@@ -2,7 +2,7 @@
 import { api } from "@/shared/api/axiosInstance";
 import type { Categoria } from "../types/categoria";
 
-export interface CategoriaFormData {
+interface CategoriaFormData {
   nombre: string;
   descripcion: string;
 }
