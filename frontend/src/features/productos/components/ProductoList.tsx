@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import type { Categoria } from "../types/categoria";
+import type { Producto } from "../types/producto";
 import { EmptyState } from "@/shared/components/EmptyState";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore } from "@/store/authStore";
 import {
   flexRender,
   getCoreRowModel,
@@ -13,24 +13,30 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 
-interface CategoriaListProps {
-  categorias: Categoria[];
-  onAñadirCategoria: () => void;
-  onEditar: (categoriaSeleccionada: Categoria) => void;
-  onEliminar: (categoriaId: number) => void;
+// Props que recibe este componente desde la página padre (ProductsPage)
+interface ProductoListProps {
+  productos: Producto[]; // Lista de productos que viene de la API
+  onAñadirProducto: () => void; // Función para abrir el modal en modo "crear"
+  onEditar: (producto: Producto) => void; // Función para abrir el modal con un producto a editar
+  onEliminar: (productoId: number) => void; // Función para borrar un producto por su ID
 }
 
-const columnHelper = createColumnHelper<Categoria>();
+// Creamos el helper de columnas tipado con nuestra interfaz Producto.
+const columnHelper = createColumnHelper<Producto>();
 
-const sinCategorias: Categoria[] = [];
+// Constante fija por si la lista viene vacía o undefined
+const sinProductos: Producto[] = [];
 
-export default function CategoriaList({
-  categorias,
-  onAñadirCategoria,
+export default function ProductoList({
+  productos,
+  onAñadirProducto,
   onEditar,
   onEliminar,
-}: CategoriaListProps) {
+}: ProductoListProps) {
+  // Estado para saber por qué columna estamos ordenando y en qué dirección
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  // Estado para la paginación
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,
@@ -39,6 +45,7 @@ export default function CategoriaList({
   const user = useAuthStore((state) => state.user);
   const esAdmin = Boolean(user?.roles?.includes("admin"));
 
+  // Definición de las columnas de la tabla
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
@@ -47,17 +54,74 @@ export default function CategoriaList({
           <div className="text-center font-mono">#{info.getValue()}</div>
         ),
       }),
+
       columnHelper.accessor("nombre", {
         header: "NOMBRE",
       }),
+
       columnHelper.accessor("descripcion", {
         header: "DESCRIPCIÓN",
         cell: (info) => {
           const valor = info.getValue();
           return valor ? (
-            valor
+            <span>{valor}</span>
           ) : (
             <span className="text-gray-400 italic">Sin descripción</span>
+          );
+        },
+      }),
+
+      columnHelper.accessor("precio_base", {
+        header: "PRECIO",
+        cell: (info) => (
+          <span className="font-medium text-gray-800">
+            $
+            {Number(info.getValue()).toLocaleString("es-AR", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </span>
+        ),
+      }),
+
+      columnHelper.accessor("categorias", {
+        header: "CATEGORÍAS",
+        cell: (info) => {
+          const listaCategorias = info.getValue();
+          if (!listaCategorias || listaCategorias.length === 0) {
+            return (
+              <span className="text-gray-400 italic text-xs">
+                Sin categoría
+              </span>
+            );
+          }
+          return (
+            <div className="flex flex-wrap gap-1">
+              {listaCategorias.map((categoria) => (
+                <span
+                  key={categoria.id}
+                  className="px-2 py-0.5 bg-orange-50 text-orange-700 text-xs font-medium rounded-md border border-orange-200"
+                >
+                  {categoria.nombre}
+                </span>
+              ))}
+            </div>
+          );
+        },
+      }),
+
+      columnHelper.accessor("disponible", {
+        header: "ESTADO",
+        cell: (info) => {
+          const disponible = info.getValue();
+          return disponible ? (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Disponible
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
+              Inactivo
+            </span>
           );
         },
       }),
@@ -93,8 +157,9 @@ export default function CategoriaList({
     [onEditar, onEliminar, esAdmin]
   );
 
+  // Inicializamos la instancia de TanStack Table
   const table = useReactTable({
-    data: categorias.length ? categorias : sinCategorias,
+    data: productos.length ? productos : sinProductos,
     columns,
     state: { sorting, pagination },
     onSortingChange: setSorting,
@@ -106,26 +171,29 @@ export default function CategoriaList({
 
   return (
     <div className="bg-white rounded-4xl shadow-sm border border-gray-100 overflow-hidden">
+      {/* Encabezado: Título con contador total y botón para crear nuevo producto */}
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
         <h2 className="text-lg font-bold text-gray-800">
-          Categorías ({categorias.length})
+          Productos ({productos.length})
         </h2>
         {/* Solo mostramos el botón de añadir si el usuario es administrador */}
         {esAdmin && (
           <button
             className="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-orange-600 transition-colors text-sm font-medium shadow-sm"
             type="button"
-            onClick={() => onAñadirCategoria()}
+            onClick={() => onAñadirProducto()}
           >
-            + Nueva categoría
+            + Nuevo producto
           </button>
         )}
       </div>
 
-      {categorias.length === 0 ? (
-        <EmptyState mensaje="No hay categorías registradas en el catálogo." />
+      {/* Si no hay productos cargados mostramos un mensaje vacío */}
+      {productos.length === 0 ? (
+        <EmptyState mensaje="No hay productos registrados en el catálogo." />
       ) : (
         <>
+          {/* Tabla responsive con scroll horizontal en pantallas chicas */}
           <div className="overflow-x-auto">
             <table className="w-full table-fixed border-collapse text-sm">
               <thead>
@@ -136,12 +204,18 @@ export default function CategoriaList({
                         key={header.id}
                         className={`px-5 py-3.5 bg-gray-50 text-xs font-semibold text-gray-400 border-b border-gray-100 ${
                           header.id === "id"
-                            ? "w-16 text-center"
+                            ? "w-14 text-center"
                             : header.id === "nombre"
-                              ? "w-48 text-left"
-                              : header.id === "acciones"
-                                ? "w-36 text-center"
-                                : "text-left"
+                              ? "w-44 text-left"
+                              : header.id === "precio_base"
+                                ? "w-24 text-left"
+                                : header.id === "categorias"
+                                  ? "w-36 text-left"
+                                  : header.id === "disponible"
+                                    ? "w-24 text-left"
+                                    : header.id === "acciones"
+                                      ? "w-36 text-center"
+                                      : "text-left"
                         }`}
                       >
                         {header.isPlaceholder ? null : (
@@ -194,6 +268,7 @@ export default function CategoriaList({
             </table>
           </div>
 
+          {/* Barra de navegación inferior para cambiar de página */}
           <nav className="flex items-center justify-center gap-4 border-t border-gray-100 bg-gray-50 px-4 py-3">
             <button
               type="button"

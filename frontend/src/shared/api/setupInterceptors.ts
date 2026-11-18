@@ -1,5 +1,5 @@
 import { api } from "./api";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore } from "@/store/authStore";
 import { useNotificationStore } from "@/store/notificationStore";
 
 const RUTAS_DE_AUTH = ["/auth/token", "/auth/me"];

@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "@/features/auth";
+import { useAuthStore } from "@/store/authStore";
 import { LoadingState } from "@/shared/components/LoadingState";
 
 interface ProtectedRouteProps {

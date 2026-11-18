@@ -5,7 +5,7 @@ import { LoadingState } from "@/shared/components/LoadingState";
 import { ErrorState } from "@/shared/components/ErrorState";
 import type { Producto, ProductoFormData } from "../types/producto";
 import { useProducts } from "../hooks/useProducts";
-import { useCategories } from "@/features/categories";
+import { useCategories } from "@/features/categorias";
 
 // Página principal del listado y gestión de Productos
 export default function ProductsPage() {

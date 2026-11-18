@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { api } from "@/shared/api/api";
-import type { UsuarioAuth } from "../types/auth.types";
+import type { UsuarioAuth } from "@/features/auth/types/auth.types";
 
 export type AuthStatus = "checking" | "authenticated" | "unauthenticated";
 

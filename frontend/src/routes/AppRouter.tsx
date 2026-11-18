@@ -1,8 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage, RegisterPage, AdminUsersPage } from "@/features/auth";
-import { CategoriesPage } from "@/features/categories";
-import { ProductsPage } from "@/features/products";
-import { IngredientesPage } from "@/features/ingredients";
+import { CategoriesPage } from "@/features/categorias";
+import { ProductsPage } from "@/features/productos";
 import { UnauthorizedPage } from "@/shared/components/UnauthorizedPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -20,7 +19,6 @@ export function AppRouter() {
         <Route path="/" element={<Navigate to="/categories" replace />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/products" element={<ProductsPage />} />
-        <Route path="/ingredients" element={<IngredientesPage />} />
       </Route>
 
       {/* Rutas protegidas exclusivas para el rol 'admin' */}

@@ -1,5 +1,5 @@
 import type { Producto, ProductoFormData } from "../types/producto";
-import type { Categoria } from "@/features/categories";
+import type { Categoria } from "@/features/categorias";
 import { useForm } from "@tanstack/react-form";
 
 interface ProductoModalProps {

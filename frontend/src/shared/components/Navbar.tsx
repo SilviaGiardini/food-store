@@ -44,14 +44,6 @@ export function Navbar() {
                     Productos
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/ingredients"
-                    className="text-gray-600 dark:text-slate-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
-                  >
-                    Ingredientes
-                  </Link>
-                </li>
                 {/* Enlace exclusivo para administradores */}
                 {esAdmin && (
                   <li>
