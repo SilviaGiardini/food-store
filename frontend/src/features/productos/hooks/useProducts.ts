@@ -1,4 +1,4 @@
-// Hook del panel admin: lista, crea, edita, elimina y ajusta stock.
+// Consultas y acciones que usa la tabla del panel.
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { handleApiError } from "@/shared/api/handleApiError";
@@ -12,14 +12,14 @@ import {
 } from "../api/productos";
 import type { ProductosPaginados } from "../types/producto";
 
-// Agrupa las consultas y acciones del panel de productos.
+// El panel pide 100 porque la tabla pagina en el cliente.
 export function useProducts() {
   const queryClient = useQueryClient();
   const mostrarNotificacion = useNotificationStore(
     (state) => state.showNotification
   );
 
-  // Cuando cambia un producto, refrescamos el panel y también el catálogo.
+  // El catálogo usa otra queryKey, por eso invalidamos las dos.
   const invalidarProductos = () => {
     queryClient.invalidateQueries({ queryKey: ["productos"] });
     queryClient.invalidateQueries({ queryKey: ["catalogo-productos"] });
@@ -30,7 +30,7 @@ export function useProducts() {
     queryFn: () => listarProductos({ limit: 100 }),
   });
 
-  // Crea un producto y avisa si salió bien.
+  // Después de crear, la tabla se refresca con la invalidación.
   const crearMutation = useMutation({
     mutationFn: crearProducto,
     onSuccess: () => {
@@ -45,7 +45,7 @@ export function useProducts() {
     },
   });
 
-  // Actualiza todos los datos del producto.
+  // El formulario manda todos los campos, por eso usamos PUT.
   const editarMutation = useMutation({
     mutationFn: actualizarProducto,
     onSuccess: () => {
@@ -60,7 +60,7 @@ export function useProducts() {
     },
   });
 
-  // Hace la baja lógica del producto.
+  // No se borra la fila: se marca como inactiva.
   const eliminarMutation = useMutation({
     mutationFn: eliminarProducto,
     onSuccess: () => {
@@ -75,7 +75,7 @@ export function useProducts() {
     },
   });
 
-  // Cambia stock y disponibilidad desde los controles de la tabla.
+  // Stock y disponibilidad se actualizan juntos en el PATCH.
   const actualizarStockMutation = useMutation({
     mutationFn: actualizarStockProducto,
     onSuccess: () => {

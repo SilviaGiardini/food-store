@@ -4,7 +4,7 @@ import { useAuth } from "@/features/auth";
 import { useUsuarios } from "../hooks/useUsuarios";
 import { UsuarioTable } from "../components/UsuarioTable";
 
-// Componente para que los administradores gestionen las cuentas de usuario
+// Panel de cuentas: el admin puede activar o desactivar usuarios.
 export default function AdminUsuariosPage() {
   const { usuario } = useAuth();
   const { usuarios, cargando, actualizando, error, procesandoId, toggleEstadoUsuario, recargar } =
@@ -19,11 +19,11 @@ export default function AdminUsuariosPage() {
             Administración de Usuarios
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Visualiza y gestiona las cuentas de los usuarios del sistema
+            Desde acá podés ver y gestionar las cuentas del sistema.
           </p>
         </div>
 
-        {/* Botón para recargar la lista */}
+        {/* Refresca la tabla sin recargar la página */}
         <button
           onClick={recargar}
           disabled={actualizando || cargando}
@@ -33,12 +33,12 @@ export default function AdminUsuariosPage() {
         </button>
       </div>
 
-      {/* Manejo de estados de carga y error */}
+      {/* Mientras carga o si falla, mostramos el estado correspondiente */}
       {cargando && <LoadingState mensaje="Cargando usuarios del sistema..." />}
 
       {error && !cargando && <ErrorState mensaje={error} />}
 
-      {/* Tabla con el listado de usuarios */}
+      {/* El id del admin evita mostrarle el botón de su propia cuenta */}
       {!cargando && !error && (
         <UsuarioTable
           usuarios={usuarios}

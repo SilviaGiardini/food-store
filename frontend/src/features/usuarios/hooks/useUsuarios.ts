@@ -1,4 +1,4 @@
-// Consulta y cambia el estado de los usuarios desde el panel admin.
+// Lista de cuentas y acción para activarlas o desactivarlas.
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNotificationStore } from "@/store/notificationStore";
@@ -8,18 +8,18 @@ import {
 } from "../api/usuarios";
 import type { UsuarioAdmin } from "../types/usuario";
 
-// Trae la lista de usuarios y prepara la acción para activarlos o desactivarlos.
+// El panel necesita ver también las cuentas desactivadas.
 export function useUsuarios() {
   const queryClient = useQueryClient();
   const showNotification = useNotificationStore((state) => state.showNotification);
 
-  // Pide al backend todos los usuarios.
+  // Una sola queryKey para que la tabla se refresque después de cada cambio.
   const query = useQuery<UsuarioAdmin[]>({
     queryKey: ["admin-usuarios"],
     queryFn: listarUsuarios,
   });
 
-  // Activa o desactiva una cuenta y después refresca la lista.
+  // El cambio se hace contra el endpoint de activar o desactivar.
   const toggleMutation = useMutation({
     mutationFn: async ({ id, estaActivo }: { id: number; estaActivo: boolean }) => {
       await cambiarEstadoUsuario(id, estaActivo);
@@ -45,15 +45,15 @@ export function useUsuarios() {
     },
   });
 
-  // Decide qué endpoint usar según si el usuario está activo o no.
+  // La tabla decide si corresponde activar o desactivar.
   const toggleEstadoUsuario = (id: number, estaActivo: boolean) => {
     toggleMutation.mutate({ id, estaActivo });
   };
 
-  // Guarda el id que se está procesando para deshabilitar solo esa fila.
+  // Solo deshabilitamos la fila que se está actualizando.
   const procesandoId = toggleMutation.isPending ? toggleMutation.variables?.id ?? null : null;
 
-  // Si la consulta falla, guardamos un mensaje para mostrarlo en pantalla.
+  // El 403 ya lo muestra el interceptor; acá no lo duplicamos.
   let errorMensaje: string | null = null;
   if (query.isError) {
     const es403 = axios.isAxiosError(query.error) && query.error.response?.status === 403;
