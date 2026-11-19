@@ -58,13 +58,12 @@ food-store/
 - PostgreSQL 15 o superior
 - Node.js 20.19 o superior
 - pnpm 9 o superior
-- Git
 
-## Puesta en marcha
+## Configuración e instalación
 
 > El backend tiene que estar corriendo antes de levantar el frontend.
 
-### 1. Base de datos
+### Base de datos
 
 Crear la base `foodstore_integrador`:
 
@@ -72,17 +71,45 @@ Crear la base `foodstore_integrador`:
 createdb foodstore_integrador
 ```
 
-### 2. Backend
+> En Windows, si `createdb` no está en el PATH, podés crearla desde pgAdmin o con `psql -U postgres -c "CREATE DATABASE foodstore_integrador;"`.
+
+### Backend
+
+1. Ubicarse en la carpeta del backend:
 
 ```bash
 cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
 ```
 
-Completar `backend/.env` con los datos de PostgreSQL y una clave secreta.
+2. Crear y activar el entorno virtual:
+
+```bash
+# En macOS / Linux
+python3 -m venv .venv
+source .venv/bin/activate
+
+# En Windows
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+3. Instalar las dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Copiar el archivo de variables de entorno:
+
+```bash
+# En macOS / Linux
+cp .env.example .env
+
+# En Windows
+copy .env.example .env
+```
+
+5. Completar `backend/.env` con los datos de PostgreSQL y una clave secreta.
 
 Para generar la clave:
 
@@ -90,7 +117,7 @@ Para generar la clave:
 python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Cargar los datos iniciales:
+6. Cargar los datos iniciales:
 
 ```bash
 python -m app.db.seed
@@ -98,7 +125,7 @@ python -m app.db.seed
 
 El seed crea el usuario administrador, las categorías y los productos. Se puede volver a ejecutar sin duplicar datos.
 
-Levantar la API:
+7. Levantar la API:
 
 ```bash
 uvicorn app.main:app --reload
@@ -106,7 +133,7 @@ uvicorn app.main:app --reload
 
 La API queda disponible en `http://localhost:8000`.
 
-### 3. Frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -114,6 +141,8 @@ pnpm install
 cp .env.example .env
 pnpm dev
 ```
+
+> En Windows, reemplazá `cp .env.example .env` por `copy .env.example .env`.
 
 Abrir `http://localhost:5173`.
 
