@@ -3,7 +3,7 @@
 **Alumna:** Silvia Giardini  
 **Materia:** Programación 4 — TUPaD  
 **Repositorio:** https://github.com/SilviaGiardini/food-store  
-**Video:** pendiente de publicación
+**Video:** https://www.youtube.com/watch?v=8uHsLnrP95g
 
 Aplicación web para pedidos de comida. Los clientes se registran, recorren el catálogo, arman un carrito y confirman un pedido con dirección y forma de pago. Los administradores gestionan categorías, productos, stock, pedidos y usuarios.
 
